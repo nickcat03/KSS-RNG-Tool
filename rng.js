@@ -228,48 +228,57 @@ function hexToStarDirection(x) {
 
 function calcCountFromStars(star1, star2, star3, star4, star5, star6) {
     var hex = startRNG;
-    let star = [star1, star2, star3, star4, star5, star6];
+    let star = [star6, star5, star4, star3, star2, star1];
     let countList = [];
     let hexList = [];
-    let amount = arguments.length;
+    let amount = 6;
     var count = 0;
     hits = 0;
-    let rngWindow = Array(11).fill(0);
-    let checkStar = Array(amount).fill(false);
+    let rngWindow = Array(12).fill(0);
+    let checkStar = Array(6).fill(false);
+    let tempHexList = Array(12).fill(0);
+    let hasValues = false;
 
-    for (var i = 0; i < amount; i++) {
-        if (star[i] != 0)
+    for (var i = 0; i < 6; i++) {
+        if (star[i] != 0) {
             checkStar[i] = true;
+        }
     }
 
+    for (var i = 0; i < 6; i++) {
+        if (checkStar[i] == true){
+            hasValues = true;
+            break;
+        } else {
+            amount = (6 - (i + 1));
+        }
+    }
+
+    if (!hasValues)
+        return;
+    
     while (count < maxCount) {
         count++;
-        let doMatch = Array(amount).fill(false);
+        let doMatch = Array(6).fill(false);
         
         hex = nextHexRNG(hex);
+        tempHexList.unshift(hex);
+        tempHexList.pop();
+
         var num1 = hex.slice(0, 2);
 
         rngWindow.unshift(hexToStarDirection(num1));
         rngWindow.pop();
 
-
-
-        /*
-        for (var i = 0; i <= 9; i++) {
-            rngWindow[i + 1] = rngWindow[i];
-        } 
-        rngWindow[9] = hexToStarDirection(num1);
-        */
-
-        for (var i = 0; i < amount; i++) {
+        for (var i = 0; i < 6; i++) {
             if ((checkStar[i] == false) || (rngWindow[i * 2] == star[i])) {
                 doMatch[i] = true;
             }
         }
 
         if (allAreTrue(doMatch)) {
-            countList.push(count);
-            hexList.push(hex);
+            countList.push(count - ((6 - amount) * 2));
+            hexList.push(tempHexList[((6 - amount) * 2)]);
             hits++;
             console.log("hit");
         }
