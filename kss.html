@@ -45,7 +45,7 @@
             line-height: 200%;
             padding: 20px;
             margin: 20px auto;
-            width: 400px;
+            width: 500px;
             border-width: 3px;
             border-style: solid;
             border-color: rgb(151, 59, 255);
@@ -53,20 +53,28 @@
         
         .output-box {
             float: right;
-            text-align: left;
-            padding-left: 10px;
-            width: 250px;
+            width: 350px;
             height: 200px;
             border-color:rgb(151, 59, 255);
             border-width: 3px;
             border-style: solid;
-            overflow: scroll;
+            overflow-y: scroll;
+        }
+
+        .output-box table {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .output-box th, td {
+            width: 100px;
         }
 
         .output-box table, th, td {
+            margin-top: 10px;
+            margin-bottom: 10px;
             border: 1px solid black;
             text-align: center;
-            width: 200px;
         }
 
 
@@ -128,7 +136,7 @@
             <h3 style="text-align:center; margin-top:0px;">Star to RNG Calculator</h3>
 
             <div class="output-box">
-                <p id="output-text"><table><tr><th>Hex</th><th>Count</th></tr></table></p>
+                <div id="output-text"><table><tr><th>Hex</th><th>Decimal</th><th>Count</th></tr></table></div>
             </div>
 
             <!-- ↑↗→↘↓↙←↖ -->
@@ -326,6 +334,13 @@
             document.getElementById("dec2").value = "119";
 
             document.getElementById("count").value = "0";
+
+            document.getElementById("star1").selectedIndex = 0;
+            document.getElementById("star2").selectedIndex = 0;
+            document.getElementById("star3").selectedIndex = 0;
+            document.getElementById("star4").selectedIndex = 0;
+            document.getElementById("star5").selectedIndex = 0;
+            document.getElementById("star6").selectedIndex = 0;
         }
 
     
@@ -440,9 +455,16 @@
 
         value = calcCountFromStars(star1, star2, star3, star4, star5, star6);
 
-        var table = "<table><tr><th>Hex</th><th>Count</th></tr>";
-        for (var i = 0; i < hits; i++)
-            table += "<tr><td>" + value[0][i] + "</td><td>" + value[1][i] + "</td></tr>";
+        var table = "<table><tr><th>Hex</th><th>Decimal</th><th>Count</th></tr>";
+        for (var i = 0; i < hits; i++) {
+            hex1 = value[0][i].slice(0, 2);
+            hex2 = value[0][i].slice(2);
+
+            dec1 = hexToDecimal(hex1);
+            dec2 = hexToDecimal(hex2);
+
+            table += "<tr><td>" + hex1 + " " + hex2 + "</td><td>" + dec1 + " " + dec2 + "</td><td>" + value[1][i] + "</td></tr>";
+        }
         table += "</table>";
         document.getElementById("output-text").innerHTML = table;
     }   
