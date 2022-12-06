@@ -10,6 +10,7 @@ const nextbitsbin = Array(16).fill(false);
 const startRNG = "7777";
 const minCount = 0;
 const maxCount = 65536;
+var hits = 0;
 
 //Basic number calc functions
 function hexToDecimal(hex) {
@@ -202,61 +203,56 @@ function nextHexRNG(initialHex) {
 }
 
 function hexToStarDirection(x) {
-    x = x.slice(0, 2);
     x = hexToDecimal(x);
 
-    switch (x) {
-        case (isBetween(x, 0, 31)):
-            return 1;
-        case (isBetween(x, 32, 63)):
-            return 2;
-        case (isBetween(x, 64, 95)):
-            return 3;
-        case (isBetween(x, 96, 127)):
-            return 4;
-        case (isBetween(x, 128, 159)):
-            return 5;
-        case (isBetween(x, 160, 191)):
-            return 6;
-        case (isBetween(x, 192, 223)):
-            return 7;
-        case (isBetween(x, 224, 255)):
-            return 8;
-        default:
-            return 0;
-    }
+    if (isBetween(x, 0, 31))
+        return 1;
+    else if (isBetween(x, 32, 63))
+        return 2;
+    else if (isBetween(x, 64, 95))
+        return 3;
+    else if (isBetween(x, 96, 127))
+        return 4;
+    else if (isBetween(x, 128, 159))
+        return 5;
+    else if (isBetween(x, 160, 191))
+        return 6;
+    else if (isBetween(x, 192, 223))
+        return 7;
+    else if (isBetween(x, 224, 255))
+        return 8;
+    else
+        return 0;
 }
 
 
 function calcCountFromStars(star1, star2, star3, star4, star5, star6) {
     var hex = startRNG;
-    const star = [star1, star2, star3, star4, star5, star6];
-    const countList = [];
-    const hexList = [];
+    let star = [star1, star2, star3, star4, star5, star6];
+    let countList = [];
+    let hexList = [];
     let amount = arguments.length;
     var count = 0;
-    const rngWindow = Array(11).fill(0);
-    const checkStar = Array(amount).fill(false);
+    hits = 0;
+    let rngWindow = Array(11).fill(0);
+    let checkStar = Array(amount).fill(false);
 
     for (var i = 0; i < amount; i++) {
         if (star[i] != 0)
             checkStar[i] = true;
     }
 
-    console.log(star);
-    console.log(checkStar);
-
-    while (count < 5) {
+    while (count < maxCount) {
         count++;
         let doMatch = Array(amount).fill(false);
         
         hex = nextHexRNG(hex);
         var num1 = hex.slice(0, 2);
 
-        console.log(rngWindow);
+        rngWindow.unshift(hexToStarDirection(num1));
+        rngWindow.pop();
 
-        rngWindow.push(hexToStarDirection(num1));
-        rngWindow.shift();
+
 
         /*
         for (var i = 0; i <= 9; i++) {
@@ -271,70 +267,13 @@ function calcCountFromStars(star1, star2, star3, star4, star5, star6) {
             }
         }
 
-        console.log(allAreTrue(doMatch));
-
         if (allAreTrue(doMatch)) {
             countList.push(count);
             hexList.push(hex);
+            hits++;
+            console.log("hit");
         }
-
-        /*
-        switch(amountToCalculate) {
-
-            case 1:
-                if (windowRNG[0] == star[0]){
-                    framelist[count] = frames;
-                    hexList[count] = hex;
-                    count++;
-                }
-                break;
-
-            case 2:
-                if ((windowRNG[2] == star[0]) && (windowRNG[0] == star[1])){
-                    framelist[count] = frames;
-                    hexList[count] = hex;
-                    count++;
-                }
-                break;
-
-            case 3:
-                if ((windowRNG[4] == star[0]) && (windowRNG[2] == star[1]) && (windowRNG[0] == star[2])){
-                    framelist[count] = frames;
-                    hexList[count] = hex;
-                    count++;
-                }
-                break;
-
-            case 4:
-                if ((windowRNG[6] == star[0]) && (windowRNG[4] == star[1]) && (windowRNG[2] == star[2]) && (windowRNG[0] == star[3])){
-                    framelist[count] = frames;
-                    hexList[count] = hex;
-                    count++;
-                }
-                break;
-
-            case 5:
-                if ((windowRNG[8] == star[0]) && (windowRNG[6] == star[1]) && (windowRNG[4] == star[2]) && (windowRNG[2] == star[3]) && (windowRNG[0] == star[4])){
-                    framelist[count] = frames;
-                    hexList[count] = hex;
-                    count++;
-                }
-                break;
-
-            case 6:
-                if ((windowRNG[10] == star[0]) && (windowRNG[8] == star[1]) && (windowRNG[6] == star[2]) && (windowRNG[4] == star[3]) && (windowRNG[2] == star[4]) && (windowRNG[0] == star[5])) {
-                    framelist[count] = frames;
-                    hexList[count] = hex;
-                    count++;
-                }
-                break;
-
-            default:
-                count = -1;
-                break;
-            }
-            */
     }
-
+    return [hexList, countList];
 }
 

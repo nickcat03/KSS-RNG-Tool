@@ -14,6 +14,7 @@
             background-attachment: fixed;
             background-size: cover;
             background-position: center;
+            background-color: lightblue;
             color: white;
             font-family: Ubuntu;
         }
@@ -59,6 +60,11 @@
             border-color:rgb(151, 59, 255);
             border-width: 3px;
             border-style: solid;
+            overflow: scroll;
+        }
+
+        .output-box table, th, td {
+            border: 1px solid black;
         }
 
 
@@ -120,10 +126,7 @@
             <h3 style="text-align:center; margin-top:0px;">Star to RNG Calculator</h3>
 
             <div class="output-box">
-                <p>Output box</p>
-            
-            
-            
+                <p id="output-text">Output box</p>
             </div>
 
             <!-- ↑↗→↘↓↙←↖ -->
@@ -432,9 +435,13 @@
         var star4 = document.querySelector('#star4').selectedIndex;
         var star5 = document.querySelector('#star5').selectedIndex;
         var star6 = document.querySelector('#star6').selectedIndex;
-        alert("" + star1 + star2 + star3 + star4 + star5 + star6);
 
-        calcCountFromStars(star1, star2, star3, star4, star5, star6);
+        value = calcCountFromStars(star1, star2, star3, star4, star5, star6);
+
+        document.getElementById("output-text").innerHTML = "<table><tr><th>Hex</th><th>Count</th></tr>"
+        for (var i = 0; i < hits; i++)
+            document.getElementById("output-text").innerHTML += "<tr><td>" + value[0][i] + "</td><td>" + value[1][i] + "</td></tr>";
+        document.getElementById("output-text").innerHTML += "</table>"
     }
 
     </script>
