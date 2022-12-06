@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+    <style>
+
+        @import url("../styles.css");
+
+        h1 {
+            text-align: center;
+        }
+
+        body {
+            background: url("../images/backgrounds/fattywhale.png");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            color: white;
+            font-family: Ubuntu;
+        }
+
+        .content {
+            background: rgba(24, 13, 26, 0.87);
+            padding: 20px;
+            margin: 20px auto;
+            width: auto;
+            min-width: 600px;
+            max-width: 900px;
+            border-width: 3px;
+            border-style: solid;
+            border-color: rgb(151, 59, 255);
+        }
+
+        .basic-calculator {
+            line-height: 200%;
+            padding: 20px;
+            margin: 20px auto;
+            width: 300px;
+            border-width: 3px;
+            border-style: solid;
+            border-color: rgb(151, 59, 255);
+        }
+
+        .star-to-RNG-calculator {
+            line-height: 200%;
+            padding: 20px;
+            margin: 20px auto;
+            width: 300px;
+            border-width: 3px;
+            border-style: solid;
+            border-color: rgb(151, 59, 255);
+        }
+        
+        .output-box {
+            float: right;
+            text-align: left;
+            padding-left: 10px;
+            width: 160px;
+            height: 200px;
+            border-color:rgb(151, 59, 255);
+            border-width: 3px;
+            border-style: solid;
+        }
+
+
+        .buttons {
+            float: right;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 10px;
+        }
+
+
+
+    </style>
+    <head>
+        <title>Kirby Super Star RNG</title>
+    </head>
+    <body>
+    <script src="rng.js"></script>
+
+    <div class="content darkbglinks">
+        <h1>Kirby Super Star RNG Documentation</h1>
+
+        <!-- Basic Calculator -->
+        <div class="basic-calculator">
+            <h3 style="text-align:center; margin-top:0px;">Basic Calculator</h3>
+            <label>Hex: </label>
+            <div class="buttons">
+                <input style="width: 25px" maxlength="2" type="text" id="hex1">
+                <input style="width: 25px" maxlength="2" type="text" id="hex2">
+                <button onclick="hexConv()">Convert</button>
+                <button onclick="hexStep()">Next Step</button>
+            </div>
+
+            <br>
+
+            <label>Decimal: </label>
+            <div class="buttons">
+                <input style="width: 25px" maxlength="3" type="text" id="dec1">
+                <input style="width: 25px" maxlength="3" type="text" id="dec2">
+                <button onclick="decConv()">Convert</button>
+                <button onclick="decStep()">Next Step</button>
+            </div>
+
+            <br>
+
+            <label>Count: </label>
+            <div class="buttons">
+                <input style="width: 63px" maxlength="5" type="text" id="count">
+                <button onclick="countConv()">Convert</button>
+                <button onclick="countStep()">Next Step</button>
+            </div>
+        </div>
+
+
+        <!--Star to RNG Calculator-->
+        <div class="star-to-RNG-calculator">
+            <h3 style="text-align:center; margin-top:0px;">Star to RNG Calculator</h3>
+
+            <div class="output-box">
+                <p>Output box</p>
+            
+            
+            
+            </div>
+
+            <!-- ↑↗→↘↓↙←↖ -->
+            <label for="star1">Star 1:</label>
+            <select id = "star1" onchange = starOutput(1)>
+                <option value="0"> </option>
+                <option value="1">↑</option>    
+                <option value="2">↗</option>
+                <option value="3">→</option>
+                <option value="4">↘</option>
+                <option value="5">↓</option>
+                <option value="6">↙</option>
+                <option value="7">←</option>
+                <option value="8">↖</option>    
+            </select>
+            <span id="starO1"></span>
+            <br>
+
+            <label for="star2">Star 2:</label>
+            <select id = "star2" onchange = starOutput(2)>
+                <option value="0"> </option>
+                <option value="1">↑</option>    
+                <option value="2">↗</option>
+                <option value="3">→</option>
+                <option value="4">↘</option>
+                <option value="5">↓</option>
+                <option value="6">↙</option>
+                <option value="7">←</option>
+                <option value="8">↖</option>  
+            </select>
+            <span id="starO2"></span>
+            <br>
+
+            <label for="star3">Star 3:</label>
+            <select id = "star3" onchange = starOutput(3)>
+                <option value="0"> </option>
+                <option value="1">↑</option>    
+                <option value="2">↗</option>
+                <option value="3">→</option>
+                <option value="4">↘</option>
+                <option value="5">↓</option>
+                <option value="6">↙</option>
+                <option value="7">←</option>
+                <option value="8">↖</option>  
+            </select>
+            <span id="starO3"></span>
+            <br>
+
+            <label for="star4">Star 4:</label>
+            <select id = "star4" onchange = starOutput(4)>
+                <option value="0"> </option>
+                <option value="1">↑</option>    
+                <option value="2">↗</option>
+                <option value="3">→</option>
+                <option value="4">↘</option>
+                <option value="5">↓</option>
+                <option value="6">↙</option>
+                <option value="7">←</option>
+                <option value="8">↖</option>  
+            </select>
+            <span id="starO4"></span>
+            <br>
+
+            <label for="star5">Star 5:</label>
+            <select id = "star5" onchange = starOutput(5)>
+                <option value="0"> </option>
+                <option value="1">↑</option>    
+                <option value="2">↗</option>
+                <option value="3">→</option>
+                <option value="4">↘</option>
+                <option value="5">↓</option>
+                <option value="6">↙</option>
+                <option value="7">←</option>
+                <option value="8">↖</option>  
+            </select>
+            <span id="starO5"></span>
+            <br>
+
+            <label for="star6">Star 6:</label>
+            <select id = "star6" onchange = starOutput(6)>
+                <option value="0"> </option>
+                <option value="1">↑</option>    
+                <option value="2">↗</option>
+                <option value="3">→</option>
+                <option value="4">↘</option>
+                <option value="5">↓</option>
+                <option value="6">↙</option>
+                <option value="7">←</option>
+                <option value="8">↖</option>  
+            </select>
+            <span id="starO6"></span>
+            <br>
+
+            <button onclick="rngToStarCalc()">Calculate</button>
+
+            
+
+        </div>
+
+
+
+        <h2>What is this?</h2>
+        <p>This page will be dedicated to Kirby Super Star RNG research, and various ways to calculate said RNG. These tools are useful for RNG manipulation in TAS and (possibly) RTA speedruns.</p>
+
+        <p>RNG in KSS, like most older games, is predetermined in a set pattern when the game is started. This can be considered "pseudo-randomness"; RNG that is meant to <i>seem</i> random, but in reality is not.</p>
+
+        <p>RNG advances by a varying amount of steps each time an action with a random outcome is taken. The amount of steps it advances by is dependent on the action and is purely arbitrary (I have yet to figure out how and why this happens).</p>
+
+        <p>Technically speaking, if you were to play the game perfectly everytime, you would get the same outcome for everything that should be "random". RNG, to an extent, is completely manipulatable in real time, except for a few instances that I will document on this page at a later date.</p>
+
+        <p>For the time being, the only thing that is currently on this page is the simple conversion calculator, which is pretty much useless unless you are a nerd like myself. This page will eventually receive more useful calculators for RTA and TAS settings.</p>
+
+        <p>I am using this project to simultaneously teach myself JavaScript, so I am sure there will be bugs. Please report these bugs to me through one of my contacts <a href="../socials.html">here</a>.</p>
+
+        <h3>To be completed:</h3>
+        <ul style="line-height: 200%">
+            <li>Calculator to find RNG based on sequence of star directions / dash clouds / hammer puffs / etc...</li>
+            <li>Calculator that provides the inputs needed to generate a specific arena boss order</li>
+            <li>To be able to display all info below for a particular RNG point (and to be able to search by this info):</li>
+            <ul style="line-height: 120%">
+                <li>Standard</li>
+                <ul>
+                    <li>Star Direction</li>
+                    <li>Dash/Slide Clouds</li>
+                    <li>Inhale Particles</li>
+                    <li>Power Loss (all three)</li>
+                </ul>
+                <li>Powers</li>
+                <ul>
+                    <li>Stone Formation</li>
+                    <li>Hammer Dust Clouds (both versions)</li>
+                    <li>Plasma Sparks</li>
+                    <li>Invincibility Candy Stars</li>
+                    <li>More TBD, I need to open the emulator</li>
+                </ul>
+                <li>Helpers</li>
+                <ul>
+                    <li>Helper AI is determined by RNG and needs to be looked into more</li>
+                </ul>
+                <li>Enemies</li>
+                <ul>
+                    <li>Waddle Doo</li>
+                    <li>Smirror</li>
+                    <li>Gator</li>
+                    <li>Birdon</li>
+                    <li>Wheelie</li>
+                    <li>More TBD, but most should be the same</li>
+                </ul>
+                <li>Mini-Bosses</li>
+                <ul>
+                    <li>Chef Kawasaki (if he jumps + jump direction)</li>
+                    <li>Bonkers</li>
+                    <li>Mr. Frosty</li>
+                    <li>Poppy Bros. Sr.</li>
+                    <li>Buggzy</li>
+                    <li>More TBD...</li>
+                </ul>
+                <li>Bosses</li>
+                <ul>
+                    <li>Fatty Whale</li>
+                    <li>Battle Windows Probabilities</li>
+                    <ul>
+                        <li>Enemy attacks first?</li>
+                        <li>Enemy attacks (both turns, first and second turn have different RNG)</li>
+                        <li>Power-up Statues (how many appear, on what sides, and which ones appear)</li>
+                    </ul>
+                    <li>Dyna Blade spawn location</li>
+                    <li>Reactor (cannon location and attack sequence)</li>
+                    <li>Heavy Lobster</li>
+                    <li>Whispy Woods (unsure if RNG is involved)</li>
+                    <li>Lololo and Lalala</li>
+                    <li>TBD...</li>
+                </ul>
+                <li>Miscellaneous</li>
+                <ul>
+                    <li>Arena Boss Order</li>
+                    <li>Helper ability when spawned during Nova fight</li>
+                    <li>TBD...</li>
+                </ul>
+            </ul>
+        </ul>
+        <footer><a target="_blank" href="https://danbooru.donmai.us/posts/5347925">background image</a></footer>
+    </div>
+
+
+
+    <script>
+    
+    //Basic Calculator
+        window.onload = function() {
+            document.getElementById("hex1").value = "77";
+            document.getElementById("hex2").value = "77";
+
+            document.getElementById("dec1").value = "119";
+            document.getElementById("dec2").value = "119";
+
+            document.getElementById("count").value = "0";
+        }
+
+    
+        function hexConv() {
+            let hex1 = document.getElementById("hex1").value;
+            let hex2 = document.getElementById("hex2").value;
+            hex = hex1 + hex2;
+
+            document.getElementById("dec1").value = hexToDecimal(hex1);
+            document.getElementById("dec2").value = hexToDecimal(hex2);
+
+            document.getElementById("count").value = hexToCount(hex);
+        }
+
+        function hexStep() {
+            let hex1 = document.getElementById("hex1").value;
+            let hex2 = document.getElementById("hex2").value;
+            hex = hex1 + hex2;
+            nextHex = nextHexRNG(hex);
+            nextHex1 = nextHex.slice(0, 2);
+            nextHex2 = nextHex.slice(2);
+
+            document.getElementById("hex1").value = nextHex1;
+            document.getElementById("hex2").value = nextHex2;
+
+            document.getElementById("dec1").value = hexToDecimal(nextHex1);
+            document.getElementById("dec2").value = hexToDecimal(nextHex2);
+
+            document.getElementById("count").value = hexToCount(nextHex);
+        }
+
+        function decConv() {
+            let dec1 = document.getElementById("dec1").value;
+            let dec2 = document.getElementById("dec2").value;
+
+            hex1 = toHexString(dec1);
+            hex2 = toHexString(dec2);
+            hex = hex1 + hex2;
+
+            document.getElementById("hex1").value = hex1;
+            document.getElementById("hex2").value = hex2;
+            
+            document.getElementById("count").value = hexToCount(hex);
+        }
+
+        function decStep() {
+            let dec1 = document.getElementById("dec1").value;
+            let dec2 = document.getElementById("dec2").value;
+
+            hex1 = toHexString(dec1);
+            hex2 = toHexString(dec2);
+            hex = hex1 + hex2;
+            nextHex = nextHexRNG(hex);
+            nextHex1 = nextHex.slice(0, 2);
+            nextHex2 = nextHex.slice(2);
+
+            document.getElementById("hex1").value = nextHex1;
+            document.getElementById("hex2").value = nextHex2;
+
+            document.getElementById("dec1").value = hexToDecimal(nextHex1);
+            document.getElementById("dec2").value = hexToDecimal(nextHex2);
+
+            document.getElementById("count").value = hexToCount(nextHex);
+        }
+
+        function countConv() {
+            let count = document.getElementById("count").value;
+            count = parseInt(count);
+
+            hex = countToHex(count);
+            hex1 = hex.slice(0, 2);
+            hex2 = hex.slice(2);
+
+            document.getElementById("hex1").value = hex1;
+            document.getElementById("hex2").value = hex2;
+
+            document.getElementById("dec1").value = hexToDecimal(hex1);
+            document.getElementById("dec2").value = hexToDecimal(hex2);
+        }
+
+        function countStep() {
+            let count = document.getElementById("count").value;
+            count = parseInt(count);
+
+            hex = countToHex(count + 1);
+            hex1 = hex.slice(0, 2);
+            hex2 = hex.slice(2);
+
+            document.getElementById("hex1").value = hex1;
+            document.getElementById("hex2").value = hex2;
+
+            document.getElementById("dec1").value = hexToDecimal(hex1);
+            document.getElementById("dec2").value = hexToDecimal(hex2);
+
+            document.getElementById("count").value = count + 1;
+        }
+    
+    //Stars to RNG Calculator
+
+    function starOutput(number) {  
+        var star = document.getElementById("star" + number);  
+        document.getElementById("starO" + number).innerHTML = star.options[star.selectedIndex].text;  
+    } 
+
+    function rngToStarCalc() {
+        var star1 = document.querySelector('#star1').selectedIndex;
+        var star2 = document.querySelector('#star2').selectedIndex;
+        var star3 = document.querySelector('#star3').selectedIndex;
+        var star4 = document.querySelector('#star4').selectedIndex;
+        var star5 = document.querySelector('#star5').selectedIndex;
+        var star6 = document.querySelector('#star6').selectedIndex;
+        alert("" + star1 + star2 + star3 + star4 + star5 + star6);
+
+        calcCountFromStars(star1, star2, star3, star4, star5, star6);
+    }
+
+    </script>
+
+    </body>
+</html>
