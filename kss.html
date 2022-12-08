@@ -234,8 +234,12 @@
 
             <button onclick="rngToStarCalc()">Calculate</button>
 
-            
 
+            <br>
+            <label>Count: </label>
+            <input style="width: 75px" maxlength="5" type="text" id="whaleBox">
+            <button onclick="whaleButton()">Will Whale Ball</button>
+            <span id="whaleResult"></span>
         </div>
 
 
@@ -469,7 +473,19 @@
         }
         table += "</table>";
         document.getElementById("output-text").innerHTML = table;
-    }   
+    }
+
+    //Whale Calculator (WIP)
+    function whaleButton() {
+        let result = willWhaleBall(document.getElementById("whaleBox").value);
+        if (result) {
+            document.getElementById("whaleResult").innerHTML = "Yea, we ballin'"
+        }
+        else {
+            document.getElementById("whaleResult").innerHTML = "Nope, fatty flop"
+        }
+    }
+
 
     </script>
 

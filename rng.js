@@ -11,6 +11,8 @@ const startRNG = "7777";
 const minCount = 0;
 const maxCount = 65536;
 var hits = 0;
+const threeBin = "00000011";
+const eightBin = "00001000";
 
 //Basic number calc functions
 function hexToDecimal(hex) {
@@ -68,7 +70,7 @@ function allAreTrue(arr) {
 //"Count" conversions (count is a unit which is defined by how many steps are from the starting RNG, with the start being 0)
 //7777 = 0, DDBD = 1, etc...
 function countToHex(count) {
-    output = startRNG;
+    var output = startRNG;
     for (var i = 0; i < count; i++) {
         output = nextHexRNG(output);
     }
@@ -286,3 +288,26 @@ function calcCountFromStars(star1, star2, star3, star4, star5, star6) {
     return [hexList, countList];
 }
 
+function willWhaleBall(count) {
+    if (typeof count === 'string' || count instanceof String) {
+        count = parseInt(count);
+    }
+
+    var rng2HexFull = countToHex(count + 2);
+    var rng5HexFull = countToHex(count + 5);
+    var rng2Hex = rng2HexFull.slice(0, 2);
+    var rng5Hex = rng5HexFull.slice(0, 2);
+    var rng2Dec = hexToDecimal(rng2Hex);
+    var rng5Dec = hexToDecimal(rng5Hex);
+
+    var addThisDec = rng2Dec & 8;
+    var newDec = rng5Dec & 3;
+    var finalDec = (newDec * 2) + addThisDec;
+    console.log("finalDec: " + finalDec);
+
+    if ((finalDec == 0) || (finalDec == 4) || (finalDec == 6) || (finalDec == 12)) {
+        return true;
+    } else {
+        return false;
+    }
+}
