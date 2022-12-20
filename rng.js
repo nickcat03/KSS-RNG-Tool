@@ -255,6 +255,8 @@ function compareSixNumbers(num1, num2, num3, num4, num5, num6, funct, multiplier
     let tempHexList = Array(12).fill(0);
     let hasValues = false;
 
+    console.log(num);
+
     for (var i = 0; i < 6; i++) {
         if (num[i].length != 0) {
             checkNum[i] = true;

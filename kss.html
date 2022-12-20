@@ -90,7 +90,10 @@
             font-size: 10px;
         }
 
-
+        iframe {
+           margin: 0 auto;
+           display: block;
+        }
 
     </style>
     <head>
@@ -166,6 +169,8 @@
         <p>For the time being, the only thing that is currently on this page is the simple conversion calculator, which is pretty much useless unless you are a nerd like myself. This page will eventually receive more useful calculators for RTA and TAS settings.</p>
 
         <p>I am using this project to simultaneously teach myself JavaScript, so I am sure there will be bugs. Please report these bugs to me through one of my contacts <a href="../socials.html">here</a>.</p>
+
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/PFf83O2uo8k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
         <h3>To be completed:</h3>
         <ul style="line-height: 200%">
@@ -267,7 +272,7 @@
                 
                     for (var i = 1; i < 7; i++) {
                         print += '<label for="star1">Star ' + i + ':</label>\
-                        <select id = "star' + i + '" onchange = starOutput(1)>\
+                        <select id = "star' + i + '" onchange = starOutput(' + i + ')>\
                             <option value="0"> </option>\
                             <option value="1">↑</option>\
                             <option value="2">↗</option>\
@@ -413,6 +418,9 @@
         var star = Array(6).fill(0);
         for (var i = 0; i < 6; i++) {
             star[i] = document.querySelector('#star' + (i + 1)).selectedIndex;
+            if (star[i] == 0) {
+                star[i] = "";
+            }
         }
     
         var value = compareSixNumbers(star[0], star[1], star[2], star[3], star[4], star[5], hexToStarDirection, 2);
@@ -438,7 +446,6 @@
         }
 
         var value = compareSixNumbers(num[0], num[1], num[2], num[3], num[4], num[5], hexToDecimal, 1);
-        console.log(value);
 
         var table = "<table><tr><th>First Decimal</th><th>Last Decimal</th><th>First Count</th></tr>";
         for (var i = 0; i < hits; i++) {
