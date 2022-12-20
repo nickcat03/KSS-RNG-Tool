@@ -32,24 +32,25 @@
             border-color: rgb(151, 59, 255);
         }
 
-        .basic-calculator {
+        .calculator {
             line-height: 200%;
             padding: 20px;
             margin: 20px auto;
-            width: 300px;
             border-width: 3px;
             border-style: solid;
             border-color: rgb(151, 59, 255);
         }
 
+        .basic-calculator {
+            width: 300px;
+        }
+
         .star-to-RNG-calculator {
-            line-height: 200%;
-            padding: 20px;
-            margin: 20px auto;
             width: 500px;
-            border-width: 3px;
-            border-style: solid;
-            border-color: rgb(151, 59, 255);
+        }
+
+        .various-calculators {
+            width: 300px;
         }
         
         .output-box {
@@ -102,8 +103,8 @@
         <h1>Kirby Super Star RNG Documentation</h1>
 
         <!-- Basic Calculator -->
-        <div class="basic-calculator">
-            <h3 style="text-align:center; margin-top:0px;">Basic Calculator</h3>
+        <div class="calculator basic-calculator">
+            <h3 style="text-align:center; margin-top:0px;">Value Conversions</h3>
             <label>Hex: </label>
             <div class="buttons">
                 <input style="width: 25px" maxlength="2" type="text" id="hex1">
@@ -132,117 +133,26 @@
             </div>
         </div>
 
-
         <!--Star to RNG Calculator-->
-        <div class="star-to-RNG-calculator">
-            <h3 style="text-align:center; margin-top:0px;">Star to RNG Calculator</h3>
+        <div class="calculator star-to-RNG-calculator">
 
-            <div class="output-box">
-                <div id="output-text"><table><tr><th>Hex</th><th>Decimal</th><th>Count</th></tr></table></div>
-            </div>
-
-            <!-- ↑↗→↘↓↙←↖ -->
-            <label for="star1">Star 1:</label>
-            <select id = "star1" onchange = starOutput(1)>
-                <option value="0"> </option>
-                <option value="1">↑</option>    
-                <option value="2">↗</option>
-                <option value="3">→</option>
-                <option value="4">↘</option>
-                <option value="5">↓</option>
-                <option value="6">↙</option>
-                <option value="7">←</option>
-                <option value="8">↖</option>    
+            <select id = "calculatorOptionToggle" onchange = "calculatorOptionToggle(value)">
+                <option value="0">Star to RNG Number</option>
+                <option value="1">Find First Number</option>
             </select>
-            <span id="starO1"></span>
-            <br>
-
-            <label for="star2">Star 2:</label>
-            <select id = "star2" onchange = starOutput(2)>
-                <option value="0"> </option>
-                <option value="1">↑</option>    
-                <option value="2">↗</option>
-                <option value="3">→</option>
-                <option value="4">↘</option>
-                <option value="5">↓</option>
-                <option value="6">↙</option>
-                <option value="7">←</option>
-                <option value="8">↖</option>  
-            </select>
-            <span id="starO2"></span>
-            <br>
-
-            <label for="star3">Star 3:</label>
-            <select id = "star3" onchange = starOutput(3)>
-                <option value="0"> </option>
-                <option value="1">↑</option>    
-                <option value="2">↗</option>
-                <option value="3">→</option>
-                <option value="4">↘</option>
-                <option value="5">↓</option>
-                <option value="6">↙</option>
-                <option value="7">←</option>
-                <option value="8">↖</option>  
-            </select>
-            <span id="starO3"></span>
-            <br>
-
-            <label for="star4">Star 4:</label>
-            <select id = "star4" onchange = starOutput(4)>
-                <option value="0"> </option>
-                <option value="1">↑</option>    
-                <option value="2">↗</option>
-                <option value="3">→</option>
-                <option value="4">↘</option>
-                <option value="5">↓</option>
-                <option value="6">↙</option>
-                <option value="7">←</option>
-                <option value="8">↖</option>  
-            </select>
-            <span id="starO4"></span>
-            <br>
-
-            <label for="star5">Star 5:</label>
-            <select id = "star5" onchange = starOutput(5)>
-                <option value="0"> </option>
-                <option value="1">↑</option>    
-                <option value="2">↗</option>
-                <option value="3">→</option>
-                <option value="4">↘</option>
-                <option value="5">↓</option>
-                <option value="6">↙</option>
-                <option value="7">←</option>
-                <option value="8">↖</option>  
-            </select>
-            <span id="starO5"></span>
-            <br>
-
-            <label for="star6">Star 6:</label>
-            <select id = "star6" onchange = starOutput(6)>
-                <option value="0"> </option>
-                <option value="1">↑</option>    
-                <option value="2">↗</option>
-                <option value="3">→</option>
-                <option value="4">↘</option>
-                <option value="5">↓</option>
-                <option value="6">↙</option>
-                <option value="7">←</option>
-                <option value="8">↖</option>  
-            </select>
-            <span id="starO6"></span>
-            <br>
-
-            <button onclick="rngToStarCalc()">Calculate</button>
-
-
-            <br>
-            <label>Count: </label>
-            <input style="width: 75px" maxlength="5" type="text" id="whaleBox">
-            <button onclick="whaleButton()">Will Whale Ball</button>
-            <span id="whaleResult"></span>
+            <div id="calculatorBox"></div>
         </div>
 
-
+        <div class="calculator various-calculators">
+            <label>Count: </label>
+            <input style="width: 75px" maxlength="5" type="text" id="countBox">
+            <br>
+            <button onclick="whaleButton()">Fatty Whale</button>
+            <span id="whaleResult"></span>
+            <br>
+            <button onclick="battleWindowsButton()">Battle Windows</button>
+            <span id="battleWindowsPower1"></span><span> - </span><span id="battleWindowsPower2"></span>
+        </div>
 
         <h2>What is this?</h2>
         <p>This page will be dedicated to Kirby Super Star RNG research, and various ways to calculate said RNG. These tools are useful for RNG manipulation in TAS and (possibly) RTA speedruns.</p>
@@ -331,7 +241,7 @@
 
     <script>
     
-    //On page load
+        //On page load
         window.onload = function() {
             document.getElementById("hex1").value = "77";
             document.getElementById("hex2").value = "77";
@@ -341,12 +251,60 @@
 
             document.getElementById("count").value = "0";
 
-            document.getElementById("star1").selectedIndex = 0;
-            document.getElementById("star2").selectedIndex = 0;
-            document.getElementById("star3").selectedIndex = 0;
-            document.getElementById("star4").selectedIndex = 0;
-            document.getElementById("star5").selectedIndex = 0;
-            document.getElementById("star6").selectedIndex = 0;
+            calculatorOptionToggle(document.querySelector('#calculatorOptionToggle').selectedIndex);
+        }
+
+        //Calculator Box Switch
+        function calculatorOptionToggle(value) {
+            value = parseInt(value);
+            switch (value) {
+                case 0: //Star to RNG Number
+                    var print = '<h3 style="text-align:center; margin-top:0px;">Star to RNG Number</h3>\
+                        <div class="output-box">\
+                            <div id="output-text"><table><tr><th>Hex</th><th>Decimal</th><th>Count</th></tr></table></div>\
+                        </div>\
+                        '
+                
+                    for (var i = 1; i < 7; i++) {
+                        print += '<label for="star1">Star ' + i + ':</label>\
+                        <select id = "star' + i + '" onchange = starOutput(1)>\
+                            <option value="0"> </option>\
+                            <option value="1">↑</option>\
+                            <option value="2">↗</option>\
+                            <option value="3">→</option>\
+                            <option value="4">↘</option>\
+                            <option value="5">↓</option>\
+                            <option value="6">↙</option>\
+                            <option value="7">←</option>\
+                            <option value="8">↖</option>\
+                        </select>\
+                        <span id="starO' + i + '"></span>\
+                        <br>\
+                        '
+                    }
+
+                    print += '<button onclick="rngToStarCalc()">Calculate</button>';
+                    document.getElementById("calculatorBox").innerHTML = print;
+                    break;
+
+                case 1: //Find First Number
+                    var print = '<h3 style="text-align:center; margin-top:0px;">Find First Number</h3>\
+                        <div class="output-box">\
+                        <div id="output-text"><table><tr><th>First Decimal</th><th>Last Decimal</th><th>First Count</th></tr></table></div>\
+                        </div>\
+                        '
+                    
+                    for (var i = 1; i < 7; i++) {
+                        print += '<label>Num ' + i + ': </label>\
+                        <input style="width: 25px" maxlength="3" type="text" id="findFirstNumber' + i + '">\
+                        <br>\
+                        '
+                    }
+                
+                    print += '<button onclick="findFirstNumberCalc()">Calculate</button>';
+                    document.getElementById("calculatorBox").innerHTML = print;
+                    break;
+            }
         }
 
         //Basic Calculator
@@ -452,22 +410,20 @@
     } 
 
     function rngToStarCalc() {
-        var star1 = document.querySelector('#star1').selectedIndex;
-        var star2 = document.querySelector('#star2').selectedIndex;
-        var star3 = document.querySelector('#star3').selectedIndex;
-        var star4 = document.querySelector('#star4').selectedIndex;
-        var star5 = document.querySelector('#star5').selectedIndex;
-        var star6 = document.querySelector('#star6').selectedIndex;
-
-        value = calcCountFromStars(star1, star2, star3, star4, star5, star6);
+        var star = Array(6).fill(0);
+        for (var i = 0; i < 6; i++) {
+            star[i] = document.querySelector('#star' + (i + 1)).selectedIndex;
+        }
+    
+        var value = compareSixNumbers(star[0], star[1], star[2], star[3], star[4], star[5], hexToStarDirection, 2);
 
         var table = "<table><tr><th>Hex</th><th>Decimal</th><th>Count</th></tr>";
         for (var i = 0; i < hits; i++) {
-            hex1 = value[0][i].slice(0, 2);
-            hex2 = value[0][i].slice(2);
+            var hex1 = value[0][i].slice(0, 2);
+            var hex2 = value[0][i].slice(2);
 
-            dec1 = hexToDecimal(hex1);
-            dec2 = hexToDecimal(hex2);
+            var dec1 = hexToDecimal(hex1);
+            var dec2 = hexToDecimal(hex2);
 
             table += "<tr><td>" + hex1 + " " + hex2 + "</td><td>" + dec1 + " " + dec2 + "</td><td>" + value[1][i] + "</td></tr>";
         }
@@ -475,14 +431,52 @@
         document.getElementById("output-text").innerHTML = table;
     }
 
-    //Whale Calculator (WIP)
+    function findFirstNumberCalc() {
+        var num = Array(6).fill(0);
+        for (var i = 0; i < 6; i++) {
+            num[i] = document.getElementById("findFirstNumber" + (i + 1)).value;
+        }
+
+        var value = compareSixNumbers(num[0], num[1], num[2], num[3], num[4], num[5], hexToDecimal, 1);
+        console.log(value);
+
+        var table = "<table><tr><th>First Decimal</th><th>Last Decimal</th><th>First Count</th></tr>";
+        for (var i = 0; i < hits; i++) {
+            var amount = value[2];
+            var count = value[1][i];
+
+            var firstHex = countToHex(count - amount);
+            var lastHex = advanceRNG(firstHex, amount + 1);
+
+            var firstDec = twoHexToDecimal(firstHex);
+            var lastDec = twoHexToDecimal(lastHex);
+
+            table += "<tr><td>" + firstDec[0] + " " + firstDec[1] + "</td><td>" + lastDec[0] + " " + lastDec[1] + "</td><td>" + (count - amount) + "</td></tr>";
+        }
+        table += "</table>";
+        document.getElementById("output-text").innerHTML = table;
+    }
+
+    //Whale Calculator (first phase only)
     function whaleButton() {
-        let result = willWhaleBall(document.getElementById("whaleBox").value);
+        let result = willWhaleBall(document.getElementById("countBox").value);
         if (result) {
-            document.getElementById("whaleResult").innerHTML = "Yea, we ballin'"
+            document.getElementById("whaleResult").innerHTML = "Ball (Good RNG)"
         }
         else {
-            document.getElementById("whaleResult").innerHTML = "Nope, fatty flop"
+            document.getElementById("whaleResult").innerHTML = "Flop (Bad RNG)"
+        }
+    }
+
+    //Battle Windows Calculator
+    function battleWindowsButton() {
+        let result = battleWindowsPowers(document.getElementById("countBox").value, true);
+        document.getElementById("battleWindowsPower1").innerHTML = result[0];
+        document.getElementById("battleWindowsPower2").innerHTML = result[1];
+
+        const attackFirst = [false, false, false];
+        for (var i = 0; i < 3; i++) {
+            attackFirst[i] = battleWindowsAttackFirst(count, i);
         }
     }
 

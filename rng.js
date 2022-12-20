@@ -20,6 +20,16 @@ function hexToDecimal(hex) {
     return returnhex;
 }
 
+function twoHexToDecimal(hex) {
+    hex1 = hex.slice(0, 2);
+    hex2 = hex.slice(2);
+
+    dec1 = hexToDecimal(hex1);
+    dec2 = hexToDecimal(hex2);
+
+    return [dec1, dec2];
+}
+
 function isBetween(x, low, high) {
     return low <= x && x <= high;
 }
@@ -53,6 +63,12 @@ function toBinaryString (number) {
     return binary;
 }
 
+function convertToString (number) {
+    if (typeof number === 'string' || number instanceof String) {
+        return parseInt(number);
+    }
+}
+
 function toHexString(number) {
     var str = Number(number).toString(16);
     return str.length == 1 ? "0" + str : str;
@@ -77,18 +93,16 @@ function countToHex(count) {
     return output;
 }
 
-function hexToCount(hexTarget) {
-    hexTarget = hexTarget.toUpperCase();
-    count = 0;
-    testHex = startRNG;
-    while ((!(testHex == hexTarget)) && (count < maxCount)){
-        count++;
-        testHex = nextHexRNG(testHex);
+function countToDecimal(count) {
+    return twoHexToDecimal(countToHex(count));
+}
+
+function advanceRNG (hex, amount) {
+    var output = hex;
+    for (var i = 0; i < amount; i++) {
+        output = nextHexRNG(output);
     }
-    if (count < maxCount)
-        return count;
-    else
-        return none;
+    return output;
 }
 
 function hexToCount(hexTarget) {
@@ -228,27 +242,27 @@ function hexToStarDirection(x) {
 }
 
 
-function calcCountFromStars(star1, star2, star3, star4, star5, star6) {
+function compareSixNumbers(num1, num2, num3, num4, num5, num6, funct, multiplier) {
     var hex = startRNG;
-    let star = [star6, star5, star4, star3, star2, star1];
+    let num = [num6, num5, num4, num3, num2, num1];
     let countList = [];
     let hexList = [];
     let amount = 6;
     var count = 0;
     hits = 0;
     let rngWindow = Array(12).fill(0);
-    let checkStar = Array(6).fill(false);
+    let checkNum = Array(6).fill(false);
     let tempHexList = Array(12).fill(0);
     let hasValues = false;
 
     for (var i = 0; i < 6; i++) {
-        if (star[i] != 0) {
-            checkStar[i] = true;
+        if (num[i].length != 0) {
+            checkNum[i] = true;
         }
     }
 
     for (var i = 0; i < 6; i++) {
-        if (checkStar[i] == true){
+        if (checkNum[i] == true){
             hasValues = true;
             break;
         } else {
@@ -269,41 +283,36 @@ function calcCountFromStars(star1, star2, star3, star4, star5, star6) {
 
         var num1 = hex.slice(0, 2);
 
-        rngWindow.unshift(hexToStarDirection(num1));
+        rngWindow.unshift(funct(num1));
         rngWindow.pop();
 
         for (var i = 0; i < 6; i++) {
-            if ((checkStar[i] == false) || (rngWindow[i * 2] == star[i])) {
+            if ((checkNum[i] == false) || (rngWindow[i * multiplier] == num[i])) {
                 doMatch[i] = true;
             }
         }
 
-        if (allAreTrue(doMatch)) {
-            countList.push(count - ((6 - amount) * 2));
-            hexList.push(tempHexList[((6 - amount) * 2)]);
+        if (allAreTrue(doMatch) && (count > (6 - amount))) {
+            countList.push(count - ((6 - amount) * multiplier));
+            hexList.push(tempHexList[((6 - amount) * multiplier)]);
             hits++;
-            console.log("hit");
         }
     }
-    return [hexList, countList];
+    return [hexList, countList, amount];
 }
 
+
 function willWhaleBall(count) {
-    if (typeof count === 'string' || count instanceof String) {
-        count = parseInt(count);
-    }
+    count = convertToString(count);
 
     var rng2HexFull = countToHex(count + 2);
     var rng5HexFull = countToHex(count + 5);
-    var rng2Hex = rng2HexFull.slice(0, 2);
-    var rng5Hex = rng5HexFull.slice(0, 2);
-    var rng2Dec = hexToDecimal(rng2Hex);
-    var rng5Dec = hexToDecimal(rng5Hex);
+    var rng2Dec = hexToDecimal(rng2HexFull.slice(0, 2));
+    var rng5Dec = hexToDecimal(rng5HexFull.slice(0, 2));
 
     var addThisDec = rng2Dec & 8;
     var newDec = rng5Dec & 3;
     var finalDec = (newDec * 2) + addThisDec;
-    console.log("finalDec: " + finalDec);
 
     if ((finalDec == 0) || (finalDec == 4) || (finalDec == 6) || (finalDec == 12)) {
         return true;
@@ -311,3 +320,161 @@ function willWhaleBall(count) {
         return false;
     }
 }
+
+
+//Battle Windows
+
+function battleWindowsAttackFirst(count, enemy) {
+
+    //Enemy List:
+    //0 : Slime, Magician
+    //1 : Puppet, Dark Knight
+    //2 : Red Dragon
+
+    let startHex = countToHex(count);
+    let attacksFirstNumber = advanceRngAndSlice(startHex, 1);
+
+    switch (enemy) {
+        case 0:
+            var low = 64,
+            high = 127;
+            break;
+        case 1:
+            var low = 128,
+            high = 191;
+            break;
+        case 2:
+            var low = 192,
+            high = 255;
+            break;
+    }
+    if (isBetween(attacksFirstNumber, low, high)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function battleWindowsPowers(count, firstTurn) {
+    var firstTurnModifier = 0;
+
+    if (firstTurn) {
+        firstTurnModifier = 1;
+    }
+
+    count = convertToString(count);
+    let rightPowerAppearance = false;
+    let leftPowerAppearance = false;
+    var leftPowerModifier = 0;
+
+    var startHex = countToHex(count);
+
+    //find if right powerup shows up
+    let rightPowerAppearanceNumber = advanceRngAndSlice(startHex, 1 + firstTurnModifier);
+    if (isBetween(rightPowerAppearanceNumber, 64, 127)) {
+        rightPowerAppearance = true;
+        leftPowerModifier = 3;
+    }
+
+    //find if left powerup shows up
+    let leftPowerAppearanceNumber = advanceRngAndSlice(startHex, 1 + firstTurnModifier + leftPowerModifier);
+    if (isBetween(leftPowerAppearanceNumber, 128, 191))
+        leftPowerAppearance = true;
+
+    //calculate right side
+    if (rightPowerAppearance == true) {
+        rightPower = determinePowerType(startHex, firstTurnModifier);
+    }
+    else {
+        rightPower = "None";
+    }
+
+    //calculate left side
+    if (leftPowerAppearance == true) {
+        leftPower = determinePowerType(startHex, firstTurnModifier + leftPowerModifier);
+    }
+    else {
+        leftPower = "None";
+    }
+
+    //calculate ending RNG
+    if ((rightPowerAppearance == true) && (leftPowerAppearance == true)) {
+        var finalRNG = hexToDecimal(advanceRNG(startHex, 5));
+    }
+    else if ((rightPowerAppearance == true || leftPowerAppearance == true)) {
+        var finalRNG = hexToDecimal(advanceRNG(startHex, 3));
+    }
+    else {
+        var finalRNG = hexToDecimal(advanceRNG(startHex, 1));
+    }
+    return [leftPower, rightPower];
+}
+
+function determinePowerType (startHex, modifier) {
+    determinePowerPool = advanceRngAndSlice(startHex, 2 + modifier);
+    powerNumber = advanceRngAndSlice(startHex, 3 + modifier);
+    return battleWindowsPowerSelect(determinePowerPool, powerNumber);
+}
+
+function battleWindowsPowerSelect(determinePowerPool, powerNumber) {
+    //Note that this is still inaccurate. Needs to be determined
+    if (isBetween(determinePowerPool, 0, 63) || isBetween(determinePowerPool, 128, 191)) {   //pool 1
+        if (isBetween(powerNumber, 0, 21))
+            return "Fighter";
+        else if (isBetween(powerNumber, 22, 42))
+            return "Plasma";
+        else if (isBetween(powerNumber, 43, 63))
+            return "Hammer";
+        else if (isBetween(powerNumber, 64, 85))
+            return "Beam";
+        else if (isBetween(powerNumber, 86, 106))
+            return "Bomb";
+        else if (isBetween(powerNumber, 107, 127))
+            return "Sword";
+        else if (isBetween(powerNumber, 128, 148))
+            return "Hammer";
+        else if (isBetween(powerNumber, 149, 170))
+            return "Bomb";
+        else if (isBetween(powerNumber, 171, 191))
+            return "Plasma";
+        else if (isBetween(powerNumber, 192, 212))
+            return "Sword";
+        else if (isBetween(powerNumber, 213, 233))
+            return "Beam";
+        else if (isBetween(powerNumber, 234, 255))
+            return "Fighter";
+    } else {    //pool 2
+        if (isBetween(powerNumber, 0, 21))
+            return "Stone";
+        else if (isBetween(powerNumber, 22, 42))
+            return "Cutter";
+        else if (isBetween(powerNumber, 43, 63))
+            return "Wheel";
+        else if (isBetween(powerNumber, 64, 85))
+            return "Jet";
+        else if (isBetween(powerNumber, 86, 106))
+            return "Ice";
+        else if (isBetween(powerNumber, 107, 127))
+            return "Parasol";
+        else if (isBetween(powerNumber, 128, 148))
+            return "Fire";
+        else if (isBetween(powerNumber, 149, 170))
+            return "Suplex";
+        else if (isBetween(powerNumber, 171, 191))
+            return "Ninja";
+        else if (isBetween(powerNumber, 192, 212))
+            return "Yo-yo";
+        else if (isBetween(powerNumber, 213, 233))
+            return "Mirror";
+        else if (isBetween(powerNumber, 234, 255))
+            return "Wing";
+    }
+}
+
+function advanceRngAndSlice(hex, number) {
+    return hexToDecimal((advanceRNG(hex, (number))).slice(0, 2));
+}
+
+
+
