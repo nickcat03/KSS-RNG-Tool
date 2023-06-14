@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <style>
+
+        @import url("styles.css");
+
+        .content {
+            padding: 20px;
+            margin: auto;
+            margin-left: 300px;
+            margin-right: 300px;
+            width: auto;
+        }
+
+        .content p, li {
+            font-size: 18px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        
+        .vertical-center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+
+        .TOC {
+            width: 200px;
+            height: 700px;
+            float: left;
+            position: fixed;
+            left: 70px;
+            line-height: 200%;
+            font-size: 20px;
+            border: 3px solid black;
+        }
+
+
+    </style>
+    <head>
+        <title>Kirby Super Star RNG</title>
+    </head>
+    <body class="ubuntu-font">
+    <script src="rng.js"></script>
+    <script src="frontend_scripts.js"></script>
+
+    <h1>RTA RNG Manipulator Manual</h1>
+
+    <div class="TOC">
+        <ul class="TOC-text">
+            <li><a href="#what-is-this">What is this?</a></li>
+            <ul>
+                <li><a href="#bug">Report a Bug</a></li>
+            </ul>
+            <li><a href="#about-rng">About RNG</a></li>
+            <ul>
+                <li><a href="#rng-intro">Introduction</a></li>
+            </ul>
+        </ul>
+    </div>
+
+    <div class="links">
+        <a href="rta_manipulator.html">Main Page</a><br>
+        <a href="rta_tools.html">Tools</a><br>
+        <span>Manual</span>
+    </div>
+    
+    <div class="content">
+        <h2 id="what-is-this">What is this?</h2>
+        <p>This is a calculator that can predict the random actions of the entire Battle Windows fight sequence. This is done by first inputting a number of star directions, which gives the program the information required to find the player's specific RNG point. From this information, the program then simulates the entire Battle Windows sequence to predict every single Battle Windows attack, giving the player the actions needed to manipulate "good" RNG.</p>
+
+        <p>With building this calculator, there were these goals in mind:</p>
+        <ul>
+            <li>Design the calculator to be easy to use and read.</li>
+            <li>The calculator cannot waste any time in the run.</li>
+            <li>There cannot be any caveats to using the calculator - it should not be a hinderance to use in the run.</li>
+            <li>Make setup as easy as possible, and provide the proper tools needed to accomplish that.</li>
+            <li>Write a tutorial going over how RNG works and how to use this calculator (you're reading it now!)</li>
+        </ul>
+
+        <p>I am happy to say that I think I accomplished most, if not all, of these goals. Hopefully this documentation makes it easier to understand how to use this calculator and what it takes to master it.</p>
+
+        <h3 id="bug">Report a Bug</h3>
+
+        <p><span title="that doesn't surprise me">If you found a bug</span>, please provide me the following:</p>
+        <ul>
+            <li>A screenshot of the bug in my program.</li>
+            <li>Provide video footage of any gameplay associated with the bug, if necessary</li>
+            <ul>
+                <li>A screenshot of gameplay can work too, but video is much more desirable.</li>
+            </ul>
+        </ul>
+
+        <p>You can contact me through Discord: minchino, or contact me through any one of my <a href="https://nippoverse.xyz/socials.html">socials</a>.</p>
+
+
+        <h2 id="about-rng">About RNG</h2>
+        <h3 id="rng-intro">Introduction</h3>
+        <p>Kirby Super Star is a game with several random elements that can slow down the player during speedruns. These elements seem to be out of the users control, as they are "random". In reality, these outcomes are not random, and are in fact completely predictable with the proper foresight.</p>
+
+        <p>When the game is started, random numbers are procedurally generated through an arbitrary equation. This essentially pre-generates a set list of numbers, and this is the list that will be used to determine random actions. Knowing what every single number is in the list is not important, as that is the program's purpose. What is important to know is that every number is, and will always be, the exact same.</p>
+
+        <p>Kirby Super Star has two values in RAM for RNG. Both of these numbers are 8-bit unsigned integers, which means they can only be in between 0 and 255. The first number is what is used to determine random actions, while the second number is only used to generate the list. The first number is what we will focus on.</p>
+
+        <p>When a random action is made, a number in the list is used. Typically, most actions will only use one number. However, there are actions that can skip multiple numbers to make things less predictable. There are also actions that can utilize multiple numbers at once if there is more than one calculation needed.</p>
+
+        <p>We are able to view exactly what happens through a <a href="https://tasvideos.org/UserFiles/Info/72200361585279856">useful RNG tool</a> that was made by <a href="https://twitter.com/WaddleDX">WaddleDX</a>. This tool lets us see the entire list of numbers in real-time.</p>
+
+        <img id="file-select-gif" src="images/file-select-rng.gif">
+
+        <p>For example, we can take a look at when the game first boots. The right side shows the exact RNG numbers that the game will use, while the bottom shows these numbers but as a graph. We will primarily focus on the list on the right side.</p>
+
+        <p>When the game is reset, the starting RNG value will always be this specific 119 number, highlighted in blue. This also includes the entire list of values, which will always be the same. The starting number does advance a single time when the file select screen appears, but isn't very important right now, so this will be explained later.</p>
+
+        <img src="images/jump-demonstration.gif">
+
+        <p>This jumping example shows exactly how RNG is pulled for a random action. When Kirby lands on the ground, the RNG list moves down by two numbers.</p>
+
+        <p>There are many actions that will typically only advance RNG by a single number, such as dashing or determining Battle Windows attacks. Star directions are one of many actions that are arbitrarily chosen to advance RNG more than once, as the game seemingly does nothing with the first number, despite skipping it.</p>
+            
+        <p>When random actions are determined, they will use the number that they end on. This explains the procedure for the above example:</p>
+
+        <p>Before Kirby Jumps:</p>
+
+        <div>
+            <div style="float:left; height:150px; position:relative;">
+                <img class="vertical-center" src="images/jump-demonstration-before.png">
+            </div>
+            <div style="margin-left: 120px;">
+                <ul>
+                    <li>...</li>
+                    <li>97</li>
+                    <li style="color:blue">11</li>
+                    <li>137&emsp;&lt;-- If the action was not a jump, the list would typically stop here.</li>
+                    <li>217&emsp;&lt;-- Since Kirby is generating stars, the RNG list will land here instead.</li>
+                    <li>58</li>
+                    <li>...</li>
+                </ul>
+            </div>
+        </div>
+
+        <p>After Kirby Jumps:</p>
+        <div>
+            <div style="float:left; height:150px; position:relative;">
+                <img class="vertical-center" src="images/jump-demonstration-after.png">
+            </div>
+            <div style="margin-left: 120px;">
+                <ul>
+                    <li>...</li>
+                    <li>137&emsp;&lt;-- Number has been skipped.</li>
+                    <li style="color:blue">217<span style="color:black">&emsp;&lt;-- Number has been used in calculation.</span></li>
+                    <li>58</li>
+                    <li>136</li>
+                    <li>217</li>
+                    <li>...</li>
+                </ul>
+            </div>
+        </div>
+
+        <p>When Kirby jumps, the game takes the number 217 and uses it in a very simple algorithm. Majority of RNG calculations determine actions if the number is in between two specific numbers in the range of 0 and 255. In this specific example, the star went left because the number is in between 192 and 223.</p>
+
+        <h3 id="rng-count">RNG "Count"</h3>
+        <p>"Count" is a metric that represents a given point for the number of times RNG was advanced since the game was started.</p>
+
+        <img src="images/file-select-still-image.png">
+
+        <p>For example, if we were to use the RNG values for when the game was started, 119 would be a count of 0 because RNG was advanced 0 times since the game was started. 221 would be a count of 1, 193 is 2, etc...</p>
+
+        <p>Count will reach a maximum value of 65535 and will loop back to 0.</p>
+
+        <p>The count value is basically giving us the answer for "how many times have we advanced RNG". This becomes important when we want to manipulate RNG. Rather than trying to find a specific RNG spot out of 65535 numbers, it can be narrowed down to a range of around 300 or so.</p>
+
+        <h3 id="finding-count">Finding Count</h3>
+        <p>Because RNG is entirely predictable, it is very easy to find your current RNG point when provided with enough data.</p>
+
+        <p>Our best target is using the previously mentioned stars that Kirby emits when he lands on the ground, or bumps into a wall or ceiling. Because of its predictability, the directions that stars will go are also entirely predictable. By using software, we can find exactly where we are in the RNG list by inputting sequential star directions.</p>
+
+        <p>With all of this in mind, we can continue to setting up the RNG tool.</p>
+
+        <h2>Setup</h2>
+
+        <p>In order to use the RNG manipulation tool, we need to find an average range </p>
+
+        <div>
+            <div style="float:left; height:300px;">
+                <img style="height: 300px; border: 1px solid black" src="images/rng-tool-screenshot.png">
+            </div>
+            <div style="margin-left: 160px; height: 270px; position: relative; line-height: 200%;">
+                <ul class="vertical-center">
+                    <li><b>Subgame:</b> choose which subgame you are playing</li>
+                    <li><b>Min</b> and <b>Max:</b> input minimum and maximum count values</li>
+                    <li><b>Slime, Puppet, Magician</b> (or <b>Magician, Knight, Dragon</b>): Difficulty setting</li>
+                    <li><b>Inputs</b>: Choose between either 3 or 4 star inputs.</li>
+                </ul>
+            </div>
+        </div>
+
+
+        <!--
+        <p>While the "Kirby Super Star" logo is displayed, the game will advance RNG once every frame (this is to make the starting point seem random when the game is started). However, there is an oversight in the Japanese version that lets us skip this title screen in one frame, allowing us to only advance one RNG number and making the start more consistent.</p>
+        -->
+
+    </div>

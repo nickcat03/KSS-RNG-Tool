@@ -155,6 +155,8 @@
             <br>
             <button onclick="battleWindowsButton()">Battle Windows</button>
             <span id="battleWindowsPower1"></span><span> - </span><span id="battleWindowsPower2"></span>
+            <button onclick="slimeButton()">sloom</button>
+            
         </div>
 
         <h2>What is this?</h2>
@@ -423,7 +425,7 @@
             }
         }
     
-        var value = compareSixNumbers(star[0], star[1], star[2], star[3], star[4], star[5], hexToStarDirection, 2);
+        var value = compareSixNumbers(star[0], star[1], star[2], star[3], star[4], star[5], "7777", 0, 65536, hexToStarDirection, 2);
 
         var table = "<table><tr><th>Hex</th><th>Decimal</th><th>Count</th></tr>";
         for (var i = 0; i < hits; i++) {
@@ -445,7 +447,7 @@
             num[i] = document.getElementById("findFirstNumber" + (i + 1)).value;
         }
 
-        var value = compareSixNumbers(num[0], num[1], num[2], num[3], num[4], num[5], hexToDecimal, 1);
+        var value = compareSixNumbers(num[0], num[1], num[2], num[3], num[4], num[5], "7777", 0, 65536, hexToDecimal, 1);
 
         var table = "<table><tr><th>First Decimal</th><th>Last Decimal</th><th>First Count</th></tr>";
         for (var i = 0; i < hits; i++) {
@@ -477,7 +479,11 @@
 
     //Battle Windows Calculator
     function battleWindowsButton() {
-        let result = battleWindowsPowers(document.getElementById("countBox").value, true);
+        count = document.getElementById("countBox").value;
+        console.log("count: " + count);
+        hex = countToHex(count);
+        console.log("hex: " + hex);
+        let result = battleWindowsPowers(hex, false);
         document.getElementById("battleWindowsPower1").innerHTML = result[0];
         document.getElementById("battleWindowsPower2").innerHTML = result[1];
 
@@ -487,6 +493,13 @@
         }
     }
 
+    function slimeButton() {
+        count = document.getElementById("countBox").value;
+        hex = countToHex(count);
+        let result = slimePredictionRTA(hex, true);
+        console.log("results: " + result[0], result[1], result[2], result[3], result[4]);
+    }
+    
 
     </script>
 

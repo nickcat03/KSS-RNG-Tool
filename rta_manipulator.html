@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+    <meta charset="utf-8">
+    <style>
+
+        @import url("styles.css");
+
+    </style>
+    <head>
+        <title>Kirby Super Star RNG</title>
+    </head>
+    <body class="ubuntu-font">
+    <script src="rng.js"></script>
+    <script src="frontend_scripts.js"></script>
+
+    <h1>KSS RNG Manipulation RTA</h1>
+
+    <div class="links">
+        <span>Main Page</span><br>
+        <a href="rta_tools.html">Tools</a><br>
+        <a href="rta_manual.html">Manual</a>
+    </div>
+
+    <label for="subgame">Subgame: </label>
+        <select id = "subgame" onchange = "subgameToggle(value)">
+            <option value="gco">Great Cave Offensive</option>
+            <option value="mww">Milky Way Wishes</option>
+        </select>
+        <br>
+    <br>
+
+    <label>Min: </label>
+    <input style="width: 40px" maxlength="5" type="text" id="min">
+    <label>Max: </label>
+    <input style="width: 40px" maxlength="5" type="text" id="max">
+    <br>
+    <br>
+
+    <div id="difficulty-selector" style="line-height:150%">
+        <label id="enemy-label1" for="slimeDifficulty">Slime: </label>
+        <select id = "enemy-difficulty1">
+            <option value="true">Easy</option>
+            <option value="false">Fast</option>
+        </select>
+        <br>
+
+        <label id="enemy-label2" for="puppetDifficulty">Puppet: </label>
+        <select id = "enemy-difficulty2">
+            <option value="true">Easy</option>
+            <option value="false">Fast</option>
+        </select>
+        <br>
+
+        <label id="enemy-label3" for="magicianDifficulty">Magician: </label>
+        <select id = "enemy-difficulty3">
+            <option value="true">Easy</option>
+            <option value="false">Fast</option>
+        </select>
+        <br>
+    </div>
+    <br>
+
+
+    <span style="float:left;">Inputs:</span>
+    <input type="radio" name="inputs" value="3" checked onchange="changeInputs(value, 'maxInputs')"><label for="3">3</label>
+    <input type="radio" name="inputs" value="4" onchange="changeInputs(value, 'maxInputs')"><label for="4">4</label>
+
+    <table class="input-display-div" id="input-display">
+        <td id="box1">1</td>
+        <td id="box2">2</td>
+        <td id="box3">3</td>
+        <td id="box4" style="display:none">4</td>
+    </table>
+    <span style="font-size:18px">numpad: input - enter: reset - backspace: go back</span>
+    <br>
+
+    <div id="directions">Press on Numpad to start</div>
+
+    <div id="multiple-warning">-</div>
+
+    <div id="full-info-container">
+        <div class="info-container"><img id="enemy1-image" src="images/slime.png"><span id="enemy-output1">-</span></div>
+        <div class="info-container"><img id="enemy2-image" src="images/puppet.png"><span id="enemy-output2">-</span></div>
+        <div class="info-container"><img id="enemy3-image" src="images/magician.png"><span id="enemy-output3">-</span></div>
+        <div style="display:none" class="info-container" id="info-container4"><img src="images/dragonshield.png"><span id="enemy-output4">-</span></div>
+    </div>
+
+    <div id="all-possible-counts">-</div>
+
+    <div style="height: 500px;"></div>
+
+
+    <script>
+
+    const keys = [0, 0, 0];
+    const convertedKeys = Array(4).fill(0);
+    let keyCount = 0;
+    let sendKeys = false;
+
+    var subgame = 0;
+
+    const box4 = document.getElementById("box4");
+    var maxInputs = 3;
+
+    /*All stuff for subgame toggle*/
+    const enemy1Image = document.getElementById("enemy1-image");
+    const enemy2Image = document.getElementById("enemy2-image");
+    const enemy3Image = document.getElementById("enemy3-image");
+
+    /*Difficulty selector*/
+    const difficultySelector = document.getElementById("difficulty-selector");
+    const infoContainer = document.getElementById("full-info-container");
+
+    const difficultySelector1 = document.querySelector("#enemy-difficulty1");
+    const difficultySelector2 = document.querySelector("#enemy-difficulty2");
+    const difficultySelector3 = document.querySelector("#enemy-difficulty3");
+
+    const enemyLabel1 = document.getElementById("enemy-label1");
+    const enemyLabel2 = document.getElementById("enemy-label2");
+    const enemyLabel3 = document.getElementById("enemy-label3");
+
+    const infoContainer4 = document.getElementById("info-container4");
+
+    /*Stuff for RNG display*/
+    const directions = document.getElementById("directions");   
+    const multipleWarning = document.getElementById("multiple-warning");
+    const enemyOutput1 = document.getElementById("enemy-output1");      
+    const enemyOutput2 = document.getElementById("enemy-output2");
+    const enemyOutput3 = document.getElementById("enemy-output3");
+    const enemyOutput4 = document.getElementById("enemy-output4");
+    const allPossibleCounts = document.getElementById("all-possible-counts");
+
+    
+
+    //On page load
+    window.onload = function() {
+        var subgame = document.querySelector("#subgame").value;
+        subgameToggle(subgame);
+        var inputs = document.querySelector('input[name="inputs"]:checked').value;
+        changeInputs(inputs, "maxInputs");
+    }
+
+    window.addEventListener(
+        "keydown",
+        (event) => {
+            if (event.target.tagName?.toUpperCase() === 'INPUT') { //Do not send inputs if user is in a text box
+                return;
+            }
+            let key = `${event.key}`;
+            let integer = parseInt(key, 10);
+            if (integer === integer && integer != 0 && integer != 5) {
+                if (keyCount >= maxInputs) {
+                    initializeInputs();
+                }
+
+                keys[keyCount] = integer;
+                keyCount++;
+
+                //number box green lightup and input viewer
+                var tableCell =  document.getElementById("box" + (keyCount));
+                tableCell.style.backgroundColor = "#98fb98";
+                tableCell.innerHTML = NumpadToArrow(integer);
+
+                if (keyCount >= maxInputs) {
+                    sendKeys = true;
+                }
+            }
+            else if (key === "Enter") {
+                initializePage();  
+            }
+            else if (key === "Backspace") {
+                if (keyCount > 0) {
+                    keyCount --;
+                    var tableCell =  document.getElementById("box" + (keyCount + 1));
+                    tableCell.style.backgroundColor = "white";
+                    tableCell.innerHTML = keyCount + 1;
+                }
+            }
+
+            while (sendKeys) {
+                allPossibleCounts.innerHTML = "<img class='loading' src='images/kirby-running.gif'> All possible counts:";
+                rngSearch();
+                //Leave function when done (important, or else this will be a while loop
+                sendKeys = false;
+            }
+        },
+        true
+    );
+
+    async function rngSearch() {
+        //Grab numbers from text boxes
+        var min = document.getElementById("min").value;
+        var max = document.getElementById("max").value;
+
+        if ((min.length == 0) || (max.length == 0)) {
+            initializeText();
+            directions.innerHTML = "Please input values into the min and max boxes.";
+            return;
+        }
+
+        min = parseInt(min, 10);
+        max = parseInt(max, 10);
+
+        if ((min !== min) || (max !== max)) {
+            initializeText();
+            directions.innerHTML = "Please only input integers.";
+            return;
+        }
+
+        if (min < 0)
+            min = 0;
+        
+        if (max > 65536)
+            max = 65536;
+        
+        
+        for (var i = 0; i < maxInputs; i++) {
+            convertedKeys[i] = NumpadToStarDirection(keys[i]);
+        }
+        if (maxInputs < 4) {
+            convertedKeys[3] = "";
+        }
+
+        //Find RNG numbers based on star values
+        var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], "", "", advanceRNG("7777", min), min, max, hexToStarDirection, 2);
+        var currentHexValue = value[0][0]; //second [0] means that this is the "quickest" hex value
+
+        if (hits == 0) {
+            initializeText();
+            directions.innerText = "Results:";
+            multipleWarning.innerText = "Not in Range."
+            allPossibleCounts.innerHTML = "<img class='loading' src='images/kirby-running.gif'> All possible counts:";
+        }
+        else if (hits > 1) {
+            directions.innerText = "Results:";
+            multipleWarning.innerHTML = "<span style='color:red;'>Warning: </span>" + hits + " possible RNG points in this range!";
+            displayResults(currentHexValue);
+        }
+        else {
+            directions.innerText = "Results:";
+            multipleWarning.innerHTML = "Predicted RNG count: " + value[1][0];
+            displayResults(currentHexValue);
+        }
+
+        allPossibleCounts.innerHTML = await printAllValues();
+
+        function printAllValues() {
+            //Print all possible values outside of the range the user gave
+            var output = "<details><summary>All possible counts:</summary><ul>"
+            var countAll = "";
+            var allValue = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], "", "", "7777", 0, 65536, hexToStarDirection, 2);
+            for (i = 0; i < hits; i++) {
+                    if (value[1].includes(allValue[1][i]))
+                        countAll += "<li style='color:red;'>" + allValue[1][i] + "</li>";
+                    else
+                        countAll += "<li>" + allValue[1][i] + "</li>";
+                }
+            output += countAll + "</ul></details>";
+            return new Promise(resolve => setTimeout(resolve, 2000, output));
+        }
+    }
+
+
+    function initializeText() {
+        directions.innerHTML = "Press on Numpad to start";   
+        multipleWarning.innerHTML = "-";
+        enemyOutput1.innerHTML = "-";      
+        enemyOutput2.innerHTML = "-";
+        enemyOutput3.innerHTML = "-";
+        enemyOutput4.innerHTML = "-";
+        allPossibleCounts.innerHTML = "-";
+    }
+
+    function initializeInputs() {
+        keyCount = 0;
+        for (var i = 0; i < maxInputs; i++) {
+            var tableCell =  document.getElementById("box" + (i + 1));
+            tableCell.style.backgroundColor = "white";
+            tableCell.innerHTML = i + 1;
+        }
+    }
+
+    function initializePage() {
+        initializeText();
+        initializeInputs();
+    }
+
+    
+    function subgameToggle(value) {
+        switch (value) {
+            case "gco":
+                enemy1Image.src = "images/slime.png";
+                enemyLabel1.innerText = "Slime: ";
+                enemy2Image.src = "images/puppet.png";
+                enemyLabel2.innerText = "Puppet: ";
+                enemy3Image.src = "images/magician.png";
+                enemyLabel3.innerText = "Magician: ";
+                infoContainer4.style.display = 'none';
+                enemyOutput4.innerHTML = "-";
+                subgame = 0;
+                console.log(subgame);
+                initializePage();
+                break;
+            case "mww":
+                enemy1Image.src = "images/magician.png";
+                enemyLabel1.innerText = "Magician: ";
+                enemy2Image.src = "images/knight.png";
+                enemyLabel2.innerText = "Knight: ";
+                enemy3Image.src = "images/dragon.png";
+                enemyLabel3.innerText = "Dragon: ";
+                infoContainer4.style.display = 'revert';
+                subgame = 1;
+                console.log(subgame);
+                initializePage();
+                break;
+            default: 
+                break;
+        }
+    }
+
+
+    async function displayResults(currentHexValue) {
+
+        var enemyDifficulty1 = stringToBool(difficultySelector1.value);
+
+        if (enemyDifficulty1) 
+            var enemyOutput1Text = await easyPredictionRTA(currentHexValue, 0, subgame);
+        else
+            var enemyOutput1Text = await slimePredictionRTA(currentHexValue);
+
+        enemyOutput1.innerHTML = (enemyOutput1Text[0] + " - " + enemyOutput1Text[1] + " - " + enemyOutput1Text[2] + " - " + enemyOutput1Text[3] + " - " + advanceRngAndSlice(enemyOutput1Text[4], 0));
+        
+
+        var enemyDifficulty2 = stringToBool(difficultySelector2.value);
+
+        if (enemyDifficulty2) 
+            var enemyOutput2Text = await easyPredictionRTA(enemyOutput1Text[4], 1, subgame);
+        else
+            var enemyOutput2Text = await hardCavePredictionRTA(enemyOutput1Text[4], 1);
+
+        enemyOutput2.innerHTML = (enemyOutput2Text[0] + " - " + enemyOutput2Text[1] + " - " + enemyOutput2Text[2] + " - " + enemyOutput2Text[3] + " - " + advanceRngAndSlice(enemyOutput2Text[4], 0));
+        
+
+        var enemyDifficulty3 = stringToBool(difficultySelector3.value);
+
+        if (enemyDifficulty3) 
+            var enemyOutput3Text = await easyPredictionRTA(enemyOutput2Text[4], 2, subgame);
+        else
+            var enemyOutput3Text = await hardCavePredictionRTA(enemyOutput2Text[4], 2);
+
+        if (subgame == 1) {
+            enemyOutput3.innerHTML = (enemyOutput3Text[0] + " - " + enemyOutput3Text[1] + " - " + enemyOutput3Text[2] + " - " + enemyOutput3Text[3] + " - " + advanceRngAndSlice(enemyOutput3Text[4], 0));
+
+            var enemyOutput4Text = await dragonSecondTurn(enemyOutput3Text[4]);
+            enemyOutput4.innerHTML = (enemyOutput4Text);
+        }
+        else {
+            enemyOutput3.innerHTML = (enemyOutput3Text[0]);
+        }
+    }
+
+    
+
+    
+    
+
+    </script>

@@ -16,8 +16,7 @@ const eightBin = "00001000";
 
 //Basic number calc functions
 function hexToDecimal(hex) {
-    returnhex = parseInt(hex, 16);
-    return returnhex;
+    return parseInt(hex, 16);
 }
 
 function twoHexToDecimal(hex) {
@@ -35,7 +34,6 @@ function isBetween(x, low, high) {
 }
 
 function boolToInt(result) {
-    var output;
     if (result) {
         return 1;
     }
@@ -81,6 +79,10 @@ function numDigits(x) {
 function allAreTrue(arr) {
     const all =! arr.includes(false);
     return all;
+}
+
+function stringToBool(value) {
+    return (value + '').toLowerCase() === 'true';
 }
 
 //"Count" conversions (count is a unit which is defined by how many steps are from the starting RNG, with the start being 0)
@@ -152,6 +154,7 @@ function xorCalculate(count, bitnum, negative, a, b, c, d, e) {
 }
 
 function nextHexRNG(initialHex) {
+    console.log("hit");
     var initcurrbin = hexToBin(initialHex); //initcurrbin = initial current binary
     var zeroes = "";
 
@@ -242,20 +245,24 @@ function hexToStarDirection(x) {
 }
 
 
-function compareSixNumbers(num1, num2, num3, num4, num5, num6, funct, multiplier) {
-    var hex = startRNG;
+function compareSixNumbers(num1, num2, num3, num4, num5, num6, hex, startCount, endCount, funct, multiplier) {
+
+    if (startCount < 0)
+        startCount = 0;
+    
+    if (endCount > 65536)
+        endCount = 65536;
+
     let num = [num6, num5, num4, num3, num2, num1];
     let countList = [];
     let hexList = [];
     let amount = 6;
-    var count = 0;
+    var count = startCount;
     hits = 0;
     let rngWindow = Array(12).fill(0);
     let checkNum = Array(6).fill(false);
     let tempHexList = Array(12).fill(0);
     let hasValues = false;
-
-    console.log(num);
 
     for (var i = 0; i < 6; i++) {
         if (num[i].length != 0) {
@@ -275,7 +282,7 @@ function compareSixNumbers(num1, num2, num3, num4, num5, num6, funct, multiplier
     if (!hasValues)
         return;
     
-    while (count < maxCount) {
+    while (count < endCount) {
         count++;
         let doMatch = Array(6).fill(false);
         
@@ -287,6 +294,8 @@ function compareSixNumbers(num1, num2, num3, num4, num5, num6, funct, multiplier
 
         rngWindow.unshift(funct(num1));
         rngWindow.pop();
+
+        console.log("Count: " + count);
 
         for (var i = 0; i < 6; i++) {
             if ((checkNum[i] == false) || (rngWindow[i * multiplier] == num[i])) {
@@ -303,6 +312,74 @@ function compareSixNumbers(num1, num2, num3, num4, num5, num6, funct, multiplier
     return [hexList, countList, amount];
 }
 
+function NumpadToStarDirection(num) {
+    switch (num) {
+        case 1:
+            return 6;
+        case 2: 
+            return 5;
+        case 3:
+            return 4;
+        case 4:
+            return 7;
+        case 6:
+            return 3;
+        case 7:
+            return 8;
+        case 8:
+            return 1;
+        case 9:
+            return 2;
+        default:
+            return 0;
+    }
+}
+
+function StarDirectionToArrow(num) {
+    switch (num) {
+        case 1:
+            return "↑";
+        case 2: 
+            return "↗";
+        case 3:
+            return "→";
+        case 4:
+            return "↘";
+        case 5:
+            return "↓";
+        case 6:
+            return "↙";
+        case 7:
+            return "←";
+        case 8:
+            return "↖";
+        default:
+            return "";
+    }
+}
+
+function NumpadToArrow(num) {
+    switch (num) {
+        case 8:
+            return "↑";
+        case 9: 
+            return "↗";
+        case 6:
+            return "→";
+        case 3:
+            return "↘";
+        case 2:
+            return "↓";
+        case 1:
+            return "↙";
+        case 4:
+            return "←";
+        case 7:
+            return "↖";
+        default:
+            return "";
+    }
+}
 
 function willWhaleBall(count) {
     count = convertToString(count);
@@ -326,27 +403,44 @@ function willWhaleBall(count) {
 
 //Battle Windows
 
-function battleWindowsAttackFirst(count, enemy) {
+function battleWindowsAttackFirst(startHex, enemy) {
 
     //Enemy List:
-    //0 : Slime, Magician
-    //1 : Puppet, Dark Knight
-    //2 : Red Dragon
+    //0 : Slime
+    //1 : Puppet
+    //2 : Magician
+    //3 : Dark Knight
+    //4 : Red Dragon
+    //5 : Red Dragon Turn 2 (Shield)
 
-    let startHex = countToHex(count);
+    console.log("attacks first function hex: " + startHex);
+
     let attacksFirstNumber = advanceRngAndSlice(startHex, 1);
+
+    console.log("attacksFirstNumber: " + attacksFirstNumber);
 
     switch (enemy) {
         case 0:
+        case 2:
             var low = 64,
             high = 127;
             break;
         case 1:
+        case 3:
             var low = 128,
             high = 191;
             break;
-        case 2:
+        case 4:
             var low = 192,
+            high = 255;
+            break;
+        case 5:
+            if ((!isBetween(attacksFirstNumber, 154, 179)) && (!isBetween(attacksFirstNumber, 231, 255)))
+                return true;
+            else
+                return false;
+        default:
+            var low = 0,
             high = 255;
             break;
     }
@@ -358,64 +452,69 @@ function battleWindowsAttackFirst(count, enemy) {
     }
 }
 
-function battleWindowsPowers(count, firstTurn) {
-    var firstTurnModifier = 0;
+function battleWindowsPowers(startHex) {
 
-    if (firstTurn) {
-        firstTurnModifier = 1;
-    }
-
-    count = convertToString(count);
     let rightPowerAppearance = false;
     let leftPowerAppearance = false;
-    var leftPowerModifier = 0;
+    var leftPowerModifier = 1;
 
-    var startHex = countToHex(count);
+    console.log("startHex: " + advanceRngAndSlice(startHex, 0));
 
     //find if right powerup shows up
-    let rightPowerAppearanceNumber = advanceRngAndSlice(startHex, 1 + firstTurnModifier);
+    let rightPowerAppearanceNumber = advanceRngAndSlice(startHex, 0);
     if (isBetween(rightPowerAppearanceNumber, 64, 127)) {
         rightPowerAppearance = true;
         leftPowerModifier = 3;
     }
+    console.log("rightPowerAppearanceNumber: " + rightPowerAppearanceNumber);
+    console.log("rightPowerAppearance: " + rightPowerAppearance);
 
     //find if left powerup shows up
-    let leftPowerAppearanceNumber = advanceRngAndSlice(startHex, 1 + firstTurnModifier + leftPowerModifier);
+    let leftPowerAppearanceNumber = advanceRngAndSlice(startHex, leftPowerModifier);
     if (isBetween(leftPowerAppearanceNumber, 128, 191))
         leftPowerAppearance = true;
 
+    console.log("leftPowerAppearanceNumber: " + leftPowerAppearanceNumber);
+    console.log("leftPowerAppearance: " + leftPowerAppearance);
+
     //calculate right side
     if (rightPowerAppearance == true) {
-        rightPower = determinePowerType(startHex, firstTurnModifier);
+        rightPower = determinePowerType(startHex, 0);
     }
     else {
         rightPower = "None";
     }
 
+    console.log("rightPower: " + rightPower);
+
     //calculate left side
     if (leftPowerAppearance == true) {
-        leftPower = determinePowerType(startHex, firstTurnModifier + leftPowerModifier);
+        leftPower = determinePowerType(startHex, leftPowerModifier);
     }
     else {
         leftPower = "None";
     }
 
+    console.log("leftPower: " + leftPower);
+
     //calculate ending RNG
     if ((rightPowerAppearance == true) && (leftPowerAppearance == true)) {
-        var finalRNG = hexToDecimal(advanceRNG(startHex, 5));
+        var finalRNG = 5;
     }
     else if ((rightPowerAppearance == true || leftPowerAppearance == true)) {
-        var finalRNG = hexToDecimal(advanceRNG(startHex, 3));
+        var finalRNG = 3;
     }
     else {
-        var finalRNG = hexToDecimal(advanceRNG(startHex, 1));
+        var finalRNG = 1;
     }
-    return [leftPower, rightPower];
+    return [leftPower, rightPower, finalRNG];
 }
 
 function determinePowerType (startHex, modifier) {
-    determinePowerPool = advanceRngAndSlice(startHex, 2 + modifier);
-    powerNumber = advanceRngAndSlice(startHex, 3 + modifier);
+    determinePowerPool = advanceRngAndSlice(startHex, 1 + modifier);
+    console.log("determinePowerPool: " + determinePowerPool);
+    powerNumber = advanceRngAndSlice(startHex, 2 + modifier);
+    console.log("powerNumber: " + powerNumber);
     return battleWindowsPowerSelect(determinePowerPool, powerNumber);
 }
 
@@ -440,9 +539,9 @@ function battleWindowsPowerSelect(determinePowerPool, powerNumber) {
             return "Bomb";
         else if (isBetween(powerNumber, 171, 191))
             return "Plasma";
-        else if (isBetween(powerNumber, 192, 212))
+        else if (isBetween(powerNumber, 192, 213))
             return "Sword";
-        else if (isBetween(powerNumber, 213, 233))
+        else if (isBetween(powerNumber, 214, 233))
             return "Beam";
         else if (isBetween(powerNumber, 234, 255))
             return "Fighter";
@@ -465,9 +564,9 @@ function battleWindowsPowerSelect(determinePowerPool, powerNumber) {
             return "Suplex";
         else if (isBetween(powerNumber, 171, 191))
             return "Ninja";
-        else if (isBetween(powerNumber, 192, 212))
+        else if (isBetween(powerNumber, 192, 213))
             return "Yo-yo";
-        else if (isBetween(powerNumber, 213, 233))
+        else if (isBetween(powerNumber, 214, 233))
             return "Mirror";
         else if (isBetween(powerNumber, 234, 255))
             return "Wing";
@@ -478,5 +577,409 @@ function advanceRngAndSlice(hex, number) {
     return hexToDecimal((advanceRNG(hex, (number))).slice(0, 2));
 }
 
+function easyPredictionRTA (startHex, enemy, subgame) {
+
+    var subgameModifier = subgame * 2;
+
+    console.log("Your starting Hex is: " + startHex);
+    console.log("Your starting RNG count is: " + hexToCount(startHex));
+
+    var firstAttackResults = ["Do Nothing", 0]; //initialize first attack results array
+
+    //calculate if Slime goes first
+    if (battleWindowsAttackFirst(startHex, enemy + subgameModifier))
+        firstAttackResults = battleWindowsKirbyActions(startHex, enemy, 0, subgame);
+
+    var message = firstAttackResults[0]; //message that is sent at the end
+    var advances = firstAttackResults[1] + 1; //+1 first turn check
+    var powers = battleWindowsPowers(advanceRNG(startHex, advances + 1));
+
+    var leftPower = powers[0]; //what left power is 
+    var rightPower = powers[1]; //what right power is
+    advances += powers[2] + 1;  //how much RNG advances due to powers appearing, +12 for hammer smoke, +3 for wheelie damage, +1 for hit check, +1 for powers
+
+    console.log("After powers appear: " +  advanceRngAndSlice(startHex, advances));
+
+    advances += 12;
+
+    console.log("hit check 1: " + advanceRngAndSlice(startHex, advances + 1));
+
+    if (advanceRngAndSlice(startHex, advances + 1) < 64) //First battle windows hit
+        advances += 10;
+    else
+        advances += 1;
+
+    advances += 2;  //hammer clouds
+
+    //Anything after this is stuff after the first hit (which varies across Windows enemies)
+
+    if (subgame == 0) {
+        advances += 1; //wheelie movement check
+
+        if (advanceRngAndSlice(startHex, advances + 1) < 64)
+            advances += 10; //Hard hit
+        else
+            advances += 1;
+    }
+    else {
+        if (enemy == 1) {
+            advances += 2 //dash
+
+            if (advanceRngAndSlice(startHex, advances + 1) < 64)
+                advances += 10; //Hard hit
+            else
+                advances += 1;
+
+            if (advanceRngAndSlice(startHex, advances + 1) < 64)
+                advances += 10; //Hard hit
+            else
+                advances += 1;
+        }
+        else if (enemy == 2) {
+            advances += 12; //hammer charge
+
+            if (advanceRngAndSlice(startHex, advances + 1) < 64) //First battle windows hit
+                advances += 10;
+            else
+                advances += 1;
+    
+        advances += 2;  //hammer clouds
+        }
+    }
+    
+    var finalHex = advanceRNG(startHex, advances);
+    console.log("Ending: " +  advanceRngAndSlice(finalHex, 0));
+    
+    return new Promise(resolve => setTimeout(resolve, 0, [message, advances, leftPower, rightPower, finalHex]));
+}
+
+function slimePredictionRTA(startHex) {
+
+    //Keep in mind that the last frame is not going to be accurate so I will have to develop a check
+    //for this eventually!!
+    //Last frame affects power spawns and strong hits (I think just the final one but double check)
+    //In addition to this, duplicate stars is also an issue I will need to combat at some point
+    //It's gonna be foon
+
+    console.log("Your starting Hex is: " + startHex);
+    console.log("Your starting RNG count is: " + hexToCount(startHex));
+
+    var firstAttack = false;
+    var firstAttackResults = ["Do Nothing", 0]; //initialize first attack results array
+    var hitCheckAdvance = 0; //initialize variable for if kirby gets a strong hit
+
+    //calculate if Slime goes first
+    if (battleWindowsAttackFirst(startHex, 0) || battleWindowsAttackFirst(advanceRNG(startHex, 2), 0))
+        firstAttack = true; //0 = enemy type
+    
+    console.log("Set first attack to: " + firstAttack);
+
+    //If Slime attacks first, find the next RNG number where he will not attack first
+    //Else, do nothing
+    if (firstAttack)
+        firstAttackResults = battleWindowsKirbyActions(startHex, 0, 1, 0);
+
+    //first fire cloud from hammer... +2 advances
+    var advances = 2;
+
+    console.log("firstAttack: " + firstAttack);
+    console.log("firstAttack Number: " + advanceRngAndSlice(startHex, advances));
+
+    console.log("firstAttackResults: " + firstAttackResults[1]);
+
+    advances += firstAttackResults[1] + 12; //RNG advance for rest of hammer fire clouds +10, +1 for first turn check, +1 for hit check, + manual RNG advancements
+
+    if (advanceRngAndSlice(startHex, advances) < 64)
+        hitCheckAdvance = 9; //we need to assign this to a variable because the RNG needs to be advanced AFTER power check
+        //7 for the hit during power spawns, +2 for individual advances after
+
+    //Power check calculation
+    var powers = battleWindowsPowers(advanceRNG(startHex, advances + 1));
+
+    var message = firstAttackResults[0]; //message that is sent at the end
+    advances += 1; //advance 1 RNG for hit check
+    console.log("before powerup calculations: " + advanceRngAndSlice(startHex, advances));
+    console.log("advances: " + advances)
+
+    var leftPower = powers[0]; //what left power is 
+    var rightPower = powers[1]; //what right power is
+    advances += powers[2];  //how much RNG advances due to powers appearing
+
+    console.log("advances: " + advances);
+
+    console.log("After powers appear: " +  advanceRngAndSlice(startHex, advances));
+
+    advances += hitCheckAdvance; //Apply hit check RNG
+
+    //Rest of the code is for calculating the ending so we can then find Puppet RNG...
+
+    console.log("First slime hit: " +  advanceRngAndSlice(startHex, advances));
+
+    if (advanceRngAndSlice(startHex, advances + 1) < 64) //weak hit or strong hit...
+        advances += 12; //advance 8 + 4 at end
+    else
+        advances += 3; //advance 1 + 2 at end
 
 
+    console.log("Ending: " +  advanceRngAndSlice(startHex, advances));
+
+    var finalHex = advanceRNG(startHex, advances);
+
+    return [message, advances, leftPower, rightPower, finalHex];
+}
+
+
+function hardCavePredictionRTA(startHex, enemy) {
+
+    console.log("Your starting Hex is: " + startHex);
+    console.log("Your starting RNG count is: " + hexToCount(startHex));
+
+    var firstAttack = false;
+    var firstAttackResults = ["Do Nothing", 0]; //initialize first attack results array
+    var hitCheckAdvance = 0; //initialize variable for if kirby gets a strong hit
+
+    //first fire clouds from hammer... +10 advances
+    var advances = 10;
+
+    //calculate if Puppet goes first
+    if (battleWindowsAttackFirst(advanceRNG(startHex, advances), enemy) || battleWindowsAttackFirst(advanceRNG(startHex, advances + 2), enemy))
+        firstAttack = true; //1 = enemy type
+    
+    console.log("Set first attack to: " + firstAttack);
+
+    //If Puppet attacks first, find the next RNG number where he will not attack first
+    //Else, do nothing
+    if (firstAttack) 
+        firstAttackResults = battleWindowsKirbyActions(advanceRNG(startHex, advances), enemy, 1, 0);
+
+    console.log("firstAttack: " + firstAttack);
+    console.log("firstAttack Number: " + advanceRngAndSlice(startHex, advances));
+
+    console.log("firstAttackResults: " + firstAttackResults[1]);
+
+    var message = firstAttackResults[0]; //message that is sent at the end
+    advances += firstAttackResults[1] + 4; //RNG advance for rest of hammer fire clouds +2, +1 for first turn check, +1 for hit check, + manual RNG advancements
+
+    console.log("before powerup calculations: " + advanceRngAndSlice(startHex, advances));
+    console.log("advances: " + advances)
+
+    if (advanceRngAndSlice(startHex, advances) < 64)
+        hitCheckAdvance = 9; //we need to assign this to a variable because the RNG needs to be advanced AFTER power check
+        //7 for the hit during power spawns, +2 for individual advances after
+
+    //Power check calculation
+    var powers = battleWindowsPowers(advanceRNG(startHex, advances + 1));
+
+    var leftPower = powers[0]; //what left power is 
+    var rightPower = powers[1]; //what right power is
+    advances += powers[2] + hitCheckAdvance + 3;  //how much RNG advances due to powers appearing, +1 hit check, +1 power check, +2 dust clouds
+
+    console.log("advances: " + advances);
+    console.log("After powers appear: " +  advanceRngAndSlice(startHex, advances));
+
+    //Rest of the code is for calculating the ending so we can then find Magician RNG...
+
+    console.log("First Puppet hit: " +  advanceRngAndSlice(startHex, advances));
+
+    if (advanceRngAndSlice(startHex, advances + 1) < 64) //weak hit or strong hit...
+        advances += 10; //advance 8 + 2 at end
+    else
+        advances += 1; //advance 1
+
+    console.log("Ending: " +  advanceRngAndSlice(startHex, advances));
+
+    var finalHex = advanceRNG(startHex, advances);
+
+    return [message, advances, leftPower, rightPower, finalHex];
+}
+
+
+function dragonSecondTurn(startHex) {
+    if (battleWindowsAttackFirst(startHex, 3))
+        return "Do Nothing";
+    else
+        var results = battleWindowsKirbyActions(startHex, 3, 0, 1);
+        return results[0];
+}
+
+function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame) {
+
+    /*
+    * This function is laid out in this way because preferably, we do not want to do more than two dashes before the boss spawns (it is inconvenient)
+    * First, we check if RNG is good if Kirby dashes once, twice, or three times
+    * If the RNG check fails, we test if RNG is good if Kirby does a hammer swing (which advances RNG 14 times)
+    * If this check fails, we will resort to dashing in place however many times to get good RNG, which is not the best outcome but will be defaulted
+      to if there is no other possible scenario
+
+    * There are two checks in place because of how Hammer RNG influences the first turn
+    * Slime has a four frame window. In the first two frames, the hammer cloud comes first, which means
+      that the RNG that Slime will use is after the cloud.
+    ** (Keep in mind we also run into the issue on the last frame that power-ups use a different number)
+    * However, in the last two frames, Slime will choose its turn first.
+    * Puppet has a six frame window. The first two frames are different from the last four.
+    * Since this window is so small, it is best to check both circumstances and have Kirby act from both results.
+    */
+
+    switch (subgame) {
+        case 0:
+            //-------------Great Cave Offensive-------------------
+            switch (difficulty) {
+
+                //Easy difficulty 
+                case 0:  
+                    switch (enemy) {
+                        case 0:
+                            /*
+                            For Slime, the only actions we can perform are dashes because there is not enough time to do anything
+                            else. In additon, we cannot jump because of Wheelie, so the only thing we can do unfortunately is dash.
+                            */
+                            for (var i = 0; i < 10; i++) { 
+                                if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) { //Kirby will dash i number of times
+                                    console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                    return [(i) + " dash", i];
+                                }
+                            }
+                            return "NG"; //RNG should be totally fine by 10 checks, but this is a failsafe in case it happens
+                        case 1:
+                        case 2: 
+                            /*
+                            For Puppet and Magician, we now have the time to perform actions other than dashing.
+                            However, Wheelie makes this problematic, so we only include the up+b hammer attack.
+                            */
+                            for (var i = 0; i < 3; i++) { 
+                                if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) {
+                                    console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                    return [(i) + " dash", i];
+                                }
+                            }
+                            for (var i = 13; i < 16; i++) {
+                                if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) {
+                                    console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                    return ["up+b & " + ((i - 13)) + " dash", i + 1];
+                                }
+                            }
+                            for (var i = 3; i < 10; i++) { 
+                                if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) {
+                                    console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                    return [(i) + " dash", i];
+                                }
+                            }
+                            return "NG";
+                        default:
+                            return "NG";
+                    }
+
+                //Hard difficulty 
+                case 1:  
+                    switch (enemy) {
+                        case 0:
+                            /*
+                            For Slime, the only actions we can perform are dashes because there is not enough time to do anything
+                            else. In additon, we cannot jump because of Wheelie, so the only thing we can do unfortunately is dash.
+                            */
+                            for (var i = 0; i < 10; i++) { 
+                                if ((battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), enemy) == false)) { //Kirby will dash i number of times
+                                    console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                    return [(i) + " dash", i];
+                                }
+                            }
+                            return "NG"; //RNG should be totally fine by 10 checks, but this is a failsafe in case it happens
+                        case 1:
+                        case 2:
+                            /*
+                            For Puppet and Magician, we now have the time to perform actions other than dashing.
+                            However, Wheelie makes this problematic, so we only include the up+b hammer attack.
+                            */
+                            for (var i = 0; i < 3; i++) { 
+                                if ((battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), enemy) == false)) {
+                                    console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                    return [(i) + " dash", i];
+                                }
+                            }
+                            for (var i = 13; i < 16; i++) {
+                                if ((battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), enemy) == false)) {
+                                    console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                    return ["up+y & " + ((i - 13)) + " dash", i];
+                                }
+                            }
+                            for (var i = 3; i < 10; i++) { 
+                                if ((battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), enemy) == false)) {
+                                    console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                    return [(i) + " dash", i];
+                                }
+                            }
+                            return "NG";
+                        default:
+                            return "NG";
+                }
+
+                default:
+                        return "NG";
+            }
+
+        //----------------Milky Way Wishes--------------------
+        case 1:
+            switch (difficulty) {
+                //Easy
+                case 0:
+                    //All enemies follow the same pattern
+                    if (battleWindowsAttackFirst(advanceRNG(startHex, 6), enemy + 2) == false) { //one slide
+                        console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                        return ["Slide", 6];
+                    }
+                    if (enemy != 0) {
+                        if (battleWindowsAttackFirst(advanceRNG(startHex, 14), enemy + 2)) { //one up+y
+                            console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                            return ["up+y", 14];
+                        }
+                    }
+                    for (var i = 0; i < 2; i++) { 
+                        if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2) == false) { //dashes
+                            console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                            return [(i) + " dash", i];
+                        }
+                    }
+                    for (var i = 7; i < 9; i++) { 
+                        if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2) == false) { //slide + dashes
+                            console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                            return ["Slide & " (i - 6) + " dash", i];
+                        }
+                    }
+                    if (enemy != 0) {
+                        for (var i = 15; i < 17; i++) { 
+                            if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2) == false) { //up+y + dashes
+                                console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                                return ["up+y & " + (i - 14) + " dash", i];
+                            }
+                        }
+                    }
+                    for (var i = 3; i < 10; i++) { 
+                        if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2) == false) { //rest is dashes
+                            console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
+                            return [(i) + " dash", i];
+                        }
+                    }
+                    return "NG";
+                    
+                //Hard
+                case 1:
+
+                default:
+                    return "NG";
+                }
+        default:
+            return "NG";
+    }
+}
+
+
+//925
+//953
+//867
+//807
+
+//750 - 1000 is a good range
+//make a checker that sees if you have a good range
+
+
+//7 4 7
