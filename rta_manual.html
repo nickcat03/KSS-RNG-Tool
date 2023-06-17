@@ -11,6 +11,7 @@
             margin-left: 300px;
             margin-right: 300px;
             width: auto;
+            min-width: 620px;
         }
 
         .content p, li {
@@ -90,7 +91,7 @@
 
         <p><span title="that doesn't surprise me">If you found a bug</span>, please provide me the following:</p>
         <ul>
-            <li>A screenshot of the bug in my program.</li>
+            <li>A screenshot of the bug in the program.</li>
             <li>Provide video footage of any gameplay associated with the bug, if necessary</li>
             <ul>
                 <li>A screenshot of gameplay can work too, but video is much more desirable.</li>
@@ -163,7 +164,7 @@
             </div>
         </div>
 
-        <p>When Kirby jumps, the game takes the number 217 and uses it in a very simple algorithm. Majority of RNG calculations determine actions if the number is in between two specific numbers in the range of 0 and 255. In this specific example, the star went left because the number is in between 192 and 223.</p>
+        <p>When Kirby jumps, the game takes the number 217 and uses it in a very simple algorithm. The majority of RNG calculations determine actions if the number is in between two specific numbers in the range of 0 and 255. In this specific example, the star went left because the number is in between 192 and 223.</p>
 
         <h3 id="rng-count">RNG "Count"</h3>
         <p>"Count" is a metric that represents a given point for the number of times RNG was advanced since the game was started.</p>
@@ -184,8 +185,7 @@
         <p>With all of this in mind, we can continue to setting up the RNG tool.</p>
 
         <h2>Setup</h2>
-
-        <p>In order to use the RNG manipulation tool, we need to find an average range </p>
+        <h3>RNG Program Overview</h3>
 
         <div>
             <div style="float:left; height:300px;">
@@ -200,6 +200,15 @@
                 </ul>
             </div>
         </div>
+        <br>
+
+        <p>In order to use the main RNG manipulation tool, we need to find an average range of count values to be put into the Min and Max boxes. This is crucial because, like stated before, we do not want to look through a range of 65535 numbers.</p>
+
+        <h4>Why do we need to find our own range?</h4>
+        <p>Every person plays differently, and how much RNG you advance is dependent on the actions that you take in-game. More RNG advancements ≠ slower movement. The faster you play <i>could</i> be an influence, but it is not definite. Regardless, it is best to find your own range and it doesn't take too long.</p>
+
+        <h3>Finding Count Range</h3>
+        <p>The best way to calculate our range is by using the "Find RNG Count" tool in <a href="rta_tools.html">Tools</a>.</p>
 
 
         <!--

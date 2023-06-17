@@ -124,124 +124,69 @@ function hexToCount(hexTarget) {
 
 //RNG-related functions
 function xorCalculate(count, bitnum, negative, a, b, c, d, e) {
-    var result; 
-    var intresult;
-    var negresult;
+    let result = count === 5 ? a ^ b ^ c ^ d ^ e : a ^ b ^ c;
+    let intresult = negative ? boolToInt(result ^ 1) : boolToInt(result);
 
-    if (count == 5) {
-        result = (a ^ b ^ c ^ d ^ e);
-    }
-    else {
-        result = (a ^ b ^ c);
-    }
-    intresult = boolToInt(result);
-
-    if (negative) {
-        if (intresult == 0)
-            negresult = 1;
-        else
-            negresult = 0;
-        intresult = negresult;
-    }
-
-    if (intresult != 0) {
-        nextbitsint[bitnum] = 1;
-        nextbitsbin[bitnum] = true;
-    } else {
-        nextbitsint[bitnum] = 0;
-        nextbitsbin[bitnum] = false;
-    }
+    nextbitsint[bitnum] = intresult;
+    nextbitsbin[bitnum] = intresult !== 0;
 }
-
+  
 function nextHexRNG(initialHex) {
-    console.log("hit");
-    var initcurrbin = hexToBin(initialHex); //initcurrbin = initial current binary
-    var zeroes = "";
+    const initcurrbin = hexToBin(initialHex).padStart(16, "0");
+    currbitsint.fill(0);
+    currbitsbin.fill(false);
 
-    for (i = initcurrbin.length; i < 16; i++) {
-        zeroes = zeroes + "0";
+    for (let i = 0; i < 16; i++) {
+        currbitsint[i] = parseInt(initcurrbin[i]);
+        currbitsbin[i] = currbitsint[i] !== 0;
     }
 
-    currbin = zeroes + initcurrbin;  //currbin = current binary
-    currbitsstr = currbin.split(""); //convert binary to 16 strings
-
-    for (i = 0; i < 16; i++) {  //convert binary strings to booleans
-        currbitsint[i] = parseInt(currbitsstr[i]);
-        if (currbitsint[i] == 0) {
-            currbitsbin[i] = false;
-        }
-        else {
-            currbitsbin[i] = true;
-        }
-    }
-    //Bit Calculations:
-    //1
     xorCalculate(5, 0, true, currbitsbin[6], currbitsbin[7], currbitsbin[8], currbitsbin[10], currbitsbin[11]);
-    //2
     xorCalculate(5, 1, false, currbitsbin[6], currbitsbin[8], currbitsbin[9], currbitsbin[11], currbitsbin[12]);
-    //3
     xorCalculate(5, 2, false, currbitsbin[7], currbitsbin[9], currbitsbin[10], currbitsbin[12], currbitsbin[13]);
-    //4
     xorCalculate(3, 3, false, nextbitsbin[0], currbitsbin[13], currbitsbin[14], true, true);
-    //5
     xorCalculate(3, 4, false, nextbitsbin[1], currbitsbin[14], currbitsbin[15], true, true);
-    //6
     xorCalculate(3, 5, false, nextbitsbin[2], currbitsbin[15], currbitsbin[0], true, true);
-    //7
     xorCalculate(3, 6, false, nextbitsbin[3], currbitsbin[0], currbitsbin[1], true, true);
-    //8
     xorCalculate(3, 7, false, nextbitsbin[4], currbitsbin[1], currbitsbin[2], true, true);
-    //9 - 13
-    for (i = 0; i < 5; i++) {
+
+    for (let i = 0; i < 5; i++) {
         nextbitsint[i + 8] = currbitsint[i + 3];
     }
-    //14
+
     xorCalculate(3, 13, true, currbitsbin[6], currbitsbin[7], currbitsbin[8], true, true);
-    //15
     xorCalculate(3, 14, false, currbitsbin[6], currbitsbin[8], currbitsbin[9], true, true);
-    //16
     xorCalculate(3, 15, false, currbitsbin[7], currbitsbin[9], currbitsbin[10], true, true);
 
-    var completeBinary = "";
+    const completeBinary = nextbitsint.join("");
+    const b = parseInt(completeBinary, 2);
+    const inithex = toHexString(b).padStart(4, "0");
+    const hex = inithex.toUpperCase();
 
-    for (i = 0; i < 16; i++) {
-        completeBinary = completeBinary + nextbitsint[i];
-    }
-
-    var b = parseInt(completeBinary, 2);
-    var inithex = toHexString(b);
-
-    zeroes = "";
-    for (i = inithex.length; i < 4; i++) {
-        zeroes = zeroes + "0";
-    }
-
-    var hex = zeroes + inithex;
-    hex = hex.toUpperCase();
     return hex;
 }
 
 function hexToStarDirection(x) {
-    x = hexToDecimal(x);
+    const decimalValue = hexToDecimal(x);
+    const ranges = [
+        [0, 31],
+        [32, 63],
+        [64, 95],
+        [96, 127],
+        [128, 159],
+        [160, 191],
+        [192, 223],
+        [224, 255]
+    ];
 
-    if (isBetween(x, 0, 31))
-        return 1;
-    else if (isBetween(x, 32, 63))
-        return 2;
-    else if (isBetween(x, 64, 95))
-        return 3;
-    else if (isBetween(x, 96, 127))
-        return 4;
-    else if (isBetween(x, 128, 159))
-        return 5;
-    else if (isBetween(x, 160, 191))
-        return 6;
-    else if (isBetween(x, 192, 223))
-        return 7;
-    else if (isBetween(x, 224, 255))
-        return 8;
-    else
-        return 0;
+    for (let i = 0; i < ranges.length; i++) {
+        const [start, end] = ranges[i];
+        if (isBetween(decimalValue, start, end)) {
+        return i + 1;
+        }
+    }
+
+    return 0;
 }
 
 
@@ -295,8 +240,6 @@ function compareSixNumbers(num1, num2, num3, num4, num5, num6, hex, startCount, 
         rngWindow.unshift(funct(num1));
         rngWindow.pop();
 
-        console.log("Count: " + count);
-
         for (var i = 0; i < 6; i++) {
             if ((checkNum[i] == false) || (rngWindow[i * multiplier] == num[i])) {
                 doMatch[i] = true;
@@ -313,77 +256,51 @@ function compareSixNumbers(num1, num2, num3, num4, num5, num6, hex, startCount, 
 }
 
 function NumpadToStarDirection(num) {
-    switch (num) {
-        case 1:
-            return 6;
-        case 2: 
-            return 5;
-        case 3:
-            return 4;
-        case 4:
-            return 7;
-        case 6:
-            return 3;
-        case 7:
-            return 8;
-        case 8:
-            return 1;
-        case 9:
-            return 2;
-        default:
-            return 0;
-    }
+    const directionMap = {
+        1: 6,
+        2: 5,
+        3: 4,
+        4: 7,
+        6: 3,
+        7: 8,
+        8: 1,
+        9: 2
+    };
+
+    return directionMap[num] || 0;
 }
 
 function StarDirectionToArrow(num) {
-    switch (num) {
-        case 1:
-            return "↑";
-        case 2: 
-            return "↗";
-        case 3:
-            return "→";
-        case 4:
-            return "↘";
-        case 5:
-            return "↓";
-        case 6:
-            return "↙";
-        case 7:
-            return "←";
-        case 8:
-            return "↖";
-        default:
-            return "";
-    }
+    const arrowMap = {
+        1: "↑",
+        2: "↗",
+        3: "→",
+        4: "↘",
+        5: "↓",
+        6: "↙",
+        7: "←",
+        8: "↖"
+    };
+
+    return arrowMap[num] || "";
 }
 
 function NumpadToArrow(num) {
-    switch (num) {
-        case 8:
-            return "↑";
-        case 9: 
-            return "↗";
-        case 6:
-            return "→";
-        case 3:
-            return "↘";
-        case 2:
-            return "↓";
-        case 1:
-            return "↙";
-        case 4:
-            return "←";
-        case 7:
-            return "↖";
-        default:
-            return "";
-    }
+    const arrowMap = {
+        8: "↑",
+        9: "↗",
+        6: "→",
+        3: "↘",
+        2: "↓",
+        1: "↙",
+        4: "←",
+        7: "↖"
+    };
+
+    return arrowMap[num] || "";
 }
 
 function willWhaleBall(count) {
-    count = convertToString(count);
-
     var rng2HexFull = countToHex(count + 2);
     var rng5HexFull = countToHex(count + 5);
     var rng2Dec = hexToDecimal(rng2HexFull.slice(0, 2));
@@ -393,11 +310,7 @@ function willWhaleBall(count) {
     var newDec = rng5Dec & 3;
     var finalDec = (newDec * 2) + addThisDec;
 
-    if ((finalDec == 0) || (finalDec == 4) || (finalDec == 6) || (finalDec == 12)) {
-        return true;
-    } else {
-        return false;
-    }
+    return (finalDec === 0 || finalDec === 4 || finalDec === 6 || finalDec === 12);
 }
 
 
@@ -415,41 +328,33 @@ function battleWindowsAttackFirst(startHex, enemy) {
 
     console.log("attacks first function hex: " + startHex);
 
-    let attacksFirstNumber = advanceRngAndSlice(startHex, 1);
+    const attacksFirstNumber = advanceRngAndSlice(startHex, 1);
 
     console.log("attacksFirstNumber: " + attacksFirstNumber);
 
     switch (enemy) {
         case 0:
         case 2:
-            var low = 64,
+            low = 64;
             high = 127;
             break;
         case 1:
         case 3:
-            var low = 128,
+            low = 128;
             high = 191;
             break;
         case 4:
-            var low = 192,
+            low = 192;
             high = 255;
             break;
         case 5:
-            if ((!isBetween(attacksFirstNumber, 154, 179)) && (!isBetween(attacksFirstNumber, 231, 255)))
-                return true;
-            else
-                return false;
+            return (!isBetween(attacksFirstNumber, 154, 179) && !isBetween(attacksFirstNumber, 231, 255));
         default:
-            var low = 0,
+            low = 0;
             high = 255;
             break;
     }
-    if (isBetween(attacksFirstNumber, low, high)) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return isBetween(attacksFirstNumber, low, high);
 }
 
 function battleWindowsPowers(startHex) {
@@ -457,6 +362,7 @@ function battleWindowsPowers(startHex) {
     let rightPowerAppearance = false;
     let leftPowerAppearance = false;
     var leftPowerModifier = 1;
+    var finalRNG = 0;
 
     console.log("startHex: " + advanceRngAndSlice(startHex, 0));
 
@@ -480,6 +386,7 @@ function battleWindowsPowers(startHex) {
     //calculate right side
     if (rightPowerAppearance == true) {
         rightPower = determinePowerType(startHex, 0);
+        finalRNG += 2;
     }
     else {
         rightPower = "None";
@@ -490,6 +397,7 @@ function battleWindowsPowers(startHex) {
     //calculate left side
     if (leftPowerAppearance == true) {
         leftPower = determinePowerType(startHex, leftPowerModifier);
+        finalRNG += 2;
     }
     else {
         leftPower = "None";
@@ -497,17 +405,28 @@ function battleWindowsPowers(startHex) {
 
     console.log("leftPower: " + leftPower);
 
-    //calculate ending RNG
-    if ((rightPowerAppearance == true) && (leftPowerAppearance == true)) {
-        var finalRNG = 5;
+    //calculations for if both powers are the same
+    if (finalRNG == 4) {
+        var repeats = -1;
+        while ((leftPower == rightPower)) {
+            leftPowerAppearanceNumber = advanceRngAndSlice(startHex, 6 + (repeats * 3));
+            if (isBetween(leftPowerAppearanceNumber, 128, 191)) {
+                finalRNG += 3;
+                repeats += 1;
+                leftPower = determinePowerType(startHex, 6 + (repeats * 3));
+                console.log("new leftPower: " + leftPower);
+            }
+            else {
+                finalRNG += 1;
+                leftPower = "None";
+            }
+        }
+        console.log("new leftPower: " + leftPower);
     }
-    else if ((rightPowerAppearance == true || leftPowerAppearance == true)) {
-        var finalRNG = 3;
-    }
-    else {
-        var finalRNG = 1;
-    }
-    return [leftPower, rightPower, finalRNG];
+
+    finalRNG += 1;
+
+    return [leftPower, rightPower, finalRNG, repeats];
 }
 
 function determinePowerType (startHex, modifier) {
@@ -519,7 +438,6 @@ function determinePowerType (startHex, modifier) {
 }
 
 function battleWindowsPowerSelect(determinePowerPool, powerNumber) {
-    //Note that this is still inaccurate. Needs to be determined
     if (isBetween(determinePowerPool, 0, 63) || isBetween(determinePowerPool, 128, 191)) {   //pool 1
         if (isBetween(powerNumber, 0, 21))
             return "Fighter";
@@ -795,7 +713,7 @@ function hardCavePredictionRTA(startHex, enemy) {
 
 
 function dragonSecondTurn(startHex) {
-    if (battleWindowsAttackFirst(startHex, 3))
+    if (!battleWindowsAttackFirst(startHex, 5))
         return "Do Nothing";
     else
         var results = battleWindowsKirbyActions(startHex, 3, 0, 1);
@@ -923,28 +841,33 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame) {
                 //Easy
                 case 0:
                     //All enemies follow the same pattern
+                    console.log("checking slide");
                     if (battleWindowsAttackFirst(advanceRNG(startHex, 6), enemy + 2) == false) { //one slide
                         console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                         return ["Slide", 6];
                     }
+                    console.log("checking hammer");
                     if (enemy != 0) {
-                        if (battleWindowsAttackFirst(advanceRNG(startHex, 14), enemy + 2)) { //one up+y
+                        if (battleWindowsAttackFirst(advanceRNG(startHex, 14), enemy + 2) == false) { //one up+y
                             console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                             return ["up+y", 14];
                         }
                     }
+                    console.log("checking dash");
                     for (var i = 0; i < 2; i++) { 
                         if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2) == false) { //dashes
                             console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                             return [(i) + " dash", i];
                         }
                     }
+                    console.log("checking slide + dash");
                     for (var i = 7; i < 9; i++) { 
                         if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2) == false) { //slide + dashes
                             console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
-                            return ["Slide & " (i - 6) + " dash", i];
+                            return ["Slide & " + (i - 6) + " dash", i];
                         }
                     }
+                    console.log("checking hammer + dash");
                     if (enemy != 0) {
                         for (var i = 15; i < 17; i++) { 
                             if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2) == false) { //up+y + dashes
@@ -953,7 +876,8 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame) {
                             }
                         }
                     }
-                    for (var i = 3; i < 10; i++) { 
+                    console.log("checking dash");
+                    for (var i = 2; i < 10; i++) { 
                         if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2) == false) { //rest is dashes
                             console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                             return [(i) + " dash", i];

@@ -144,7 +144,10 @@
                 <option value="1">Find First Number</option>
             </select>
             <div id="calculatorBox"></div>
+            <button onclick="duplicateWindowsPowers()">duplicate windows powers</button>
         </div>
+
+
 
         <div class="calculator various-calculators">
             <label>Count: </label>
@@ -498,6 +501,29 @@
         hex = countToHex(count);
         let result = slimePredictionRTA(hex, true);
         console.log("results: " + result[0], result[1], result[2], result[3], result[4]);
+    }
+
+    function duplicateWindowsPowers () {
+        var hex = "7777";
+        var result;
+        var totalResults = 0;
+        var max = 0;
+        var table = "<table><tr><th>Left Power</th><th>Right Power</th><th>Count</th><th>Loops</th></tr>"
+        for (i = 0; i < 65535; i++) {
+            hex = nextHexRNG(hex);
+            result = battleWindowsPowers(hex);
+
+            if (result[2] > 5) {
+                table += "<tr><td>" + result[0] + "</td><td>" + result[1] + "</td><td>" + i + "</td><td>" + result[3] + "</td></tr>";
+                totalResults += 1;
+                if (result[3] > max) {
+                    max = result[3];
+                }
+            }
+        }
+        table = "Total results: " + totalResults + "<br>Most loops: " + max + table;
+        table += "</table>";
+        document.getElementById("output-text").innerHTML = table;
     }
     
 

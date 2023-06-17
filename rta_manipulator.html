@@ -198,8 +198,9 @@
             return;
         }
 
-        min = parseInt(min, 10);
-        max = parseInt(max, 10);
+        min = parseInt(min, 10) - 7;
+        max = parseInt(max, 10) + 4; 
+        //these adjustments are made because the six number function is just for the range of numbers checked, not range of results
 
         if ((min !== min) || (max !== max)) {
             initializeText();
@@ -213,6 +214,7 @@
         if (max > 65536)
             max = 65536;
         
+        var hexMin = advanceRNG("7777", min);
         
         for (var i = 0; i < maxInputs; i++) {
             convertedKeys[i] = NumpadToStarDirection(keys[i]);
@@ -222,7 +224,7 @@
         }
 
         //Find RNG numbers based on star values
-        var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], "", "", advanceRNG("7777", min), min, max, hexToStarDirection, 2);
+        var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], "", "", hexMin, min, max, hexToStarDirection, 2);
         var currentHexValue = value[0][0]; //second [0] means that this is the "quickest" hex value
 
         if (hits == 0) {
@@ -234,12 +236,12 @@
         else if (hits > 1) {
             directions.innerText = "Results:";
             multipleWarning.innerHTML = "<span style='color:red;'>Warning: </span>" + hits + " possible RNG points in this range!";
-            displayResults(currentHexValue);
+            await displayResults(currentHexValue);
         }
         else {
             directions.innerText = "Results:";
             multipleWarning.innerHTML = "Predicted RNG count: " + value[1][0];
-            displayResults(currentHexValue);
+            await displayResults(currentHexValue);
         }
 
         allPossibleCounts.innerHTML = await printAllValues();
