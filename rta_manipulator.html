@@ -33,6 +33,7 @@
     <input style="width: 40px" maxlength="5" type="text" id="min">
     <label>Max: </label>
     <input style="width: 40px" maxlength="5" type="text" id="max">
+    <button id="findButton" onClick="fillMinAndMaxDefaults()">Fill Defaults</button>
     <br>
     <br>
 
@@ -61,15 +62,23 @@
     <br>
 
 
-    <span style="float:left;">Inputs:</span>
-    <input type="radio" name="inputs" value="3" checked onchange="changeInputs(value, 'maxInputs')"><label for="3">3</label>
-    <input type="radio" name="inputs" value="4" onchange="changeInputs(value, 'maxInputs')"><label for="4">4</label>
+    <label>Stars: </label>
+        <select id = "inputAmount" onChange="changeInputs(value)">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected="selected">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
 
     <table class="input-display-div" id="input-display">
         <td id="box1">1</td>
-        <td id="box2">2</td>
-        <td id="box3">3</td>
+        <td id="box2" style="display:none">2</td>
+        <td id="box3" style="display:none">3</td>
         <td id="box4" style="display:none">4</td>
+        <td id="box5" style="display:none">5</td>
+        <td id="box6" style="display:none">6</td>
     </table>
     <span style="font-size:18px">numpad: input - enter: reset - backspace: go back</span>
     <br>
@@ -79,13 +88,22 @@
     <div id="multiple-warning">-</div>
 
     <div id="full-info-container">
-        <div class="info-container"><img id="enemy1-image" src="images/slime.png"><span id="enemy-output1">-</span></div>
-        <div class="info-container"><img id="enemy2-image" src="images/puppet.png"><span id="enemy-output2">-</span></div>
-        <div class="info-container"><img id="enemy3-image" src="images/magician.png"><span id="enemy-output3">-</span></div>
-        <div style="display:none" class="info-container" id="info-container4"><img src="images/dragonshield.png"><span id="enemy-output4">-</span></div>
+        <div class="info-container"><img class="enemy-image" id="enemy1-image" src="images/slime.png"><span class="enemy-output-text" id="enemy-output1">-</span><span class="enemy-output-text-advanced" id="enemy-output1-advanced"></span></div>
+        <div class="info-container"><img class="enemy-image" id="enemy2-image" src="images/puppet.png"><span class="enemy-output-text" id="enemy-output2">-</span><span class="enemy-output-text-advanced" id="enemy-output2-advanced"></span></div>
+        <div class="info-container"><img class="enemy-image" id="enemy3-image" src="images/magician.png"><span class="enemy-output-text" id="enemy-output3">-</span><span class="enemy-output-text-advanced" id="enemy-output3-advanced"></span></div>
+        <div style="display:none" class="info-container" id="info-container4"><img class="enemy-image" id="enemy4-image" src="images/dragonshield.png"><span id="enemy-output4">-</span></div>
     </div>
 
     <div id="all-possible-counts">-</div>
+    <br>
+
+    <details class="settings-box">
+        <summary>Settings:</summary>
+        <ul>
+            <li><label>No Numpad:</label><input type="checkbox" id="numpad-toggle" onChange="initializePage()"></li>
+            <li><label>Technical Information:</label><input type="checkbox" id="advanced-toggle" onChange="advancedInfo(this)"></li>
+        </ul>
+    </details>
 
     <div style="height: 500px;"></div>
 
@@ -93,19 +111,26 @@
     <script>
 
     const keys = [0, 0, 0];
-    const convertedKeys = Array(4).fill(0);
+    const convertedKeys = Array(6).fill(0);
     let keyCount = 0;
     let sendKeys = false;
+    let integer = null;
 
     var subgame = 0;
 
-    const box4 = document.getElementById("box4");
+    const box = [document.getElementById("box1"), document.getElementById("box2"), document.getElementById("box3"), document.getElementById("box4"), document.getElementById("box5"), document.getElementById("box6")];
     var maxInputs = 3;
+
+    const inputAmount = document.querySelector('#inputAmount');
+
+    const minBox = document.getElementById("min");
+    const maxBox = document.getElementById("max");
 
     /*All stuff for subgame toggle*/
     const enemy1Image = document.getElementById("enemy1-image");
     const enemy2Image = document.getElementById("enemy2-image");
     const enemy3Image = document.getElementById("enemy3-image");
+    const enemy4Image = document.getElementById("enemy4-image");
 
     /*Difficulty selector*/
     const difficultySelector = document.getElementById("difficulty-selector");
@@ -124,20 +149,25 @@
     /*Stuff for RNG display*/
     const directions = document.getElementById("directions");   
     const multipleWarning = document.getElementById("multiple-warning");
-    const enemyOutput1 = document.getElementById("enemy-output1");      
+    const enemyOutput1 = document.getElementById("enemy-output1");
+    const enemyOutput1Advanced = document.getElementById("enemy-output1-advanced");
     const enemyOutput2 = document.getElementById("enemy-output2");
+    const enemyOutput2Advanced = document.getElementById("enemy-output2-advanced");
     const enemyOutput3 = document.getElementById("enemy-output3");
+    const enemyOutput3Advanced = document.getElementById("enemy-output3-advanced");
     const enemyOutput4 = document.getElementById("enemy-output4");
     const allPossibleCounts = document.getElementById("all-possible-counts");
+
+    /*Settings*/
+    const noNumpad = document.querySelector("#numpad-toggle");
 
     
 
     //On page load
     window.onload = function() {
-        var subgame = document.querySelector("#subgame").value;
-        subgameToggle(subgame);
-        var inputs = document.querySelector('input[name="inputs"]:checked').value;
-        changeInputs(inputs, "maxInputs");
+        subgameToggle(document.querySelector("#subgame").value);
+        changeInputs(inputAmount.value, "maxInputs");
+        advancedInfo(document.querySelector('#advanced-toggle'));
     }
 
     window.addEventListener(
@@ -147,8 +177,13 @@
                 return;
             }
             let key = `${event.key}`;
-            let integer = parseInt(key, 10);
-            if (integer === integer && integer != 0 && integer != 5) {
+            if (noNumpad.checked) {
+                integer = noNumpadConversion(key);
+            }
+            else {
+                integer = parseInt(key, 10);
+            }
+            if (integer === integer && integer !== null && integer != 0 && integer != 5) {
                 if (keyCount >= maxInputs) {
                     initializeInputs();
                 }
@@ -178,6 +213,7 @@
             }
 
             while (sendKeys) {
+                initializeText();
                 allPossibleCounts.innerHTML = "<img class='loading' src='images/kirby-running.gif'> All possible counts:";
                 rngSearch();
                 //Leave function when done (important, or else this will be a while loop
@@ -189,8 +225,8 @@
 
     async function rngSearch() {
         //Grab numbers from text boxes
-        var min = document.getElementById("min").value;
-        var max = document.getElementById("max").value;
+        var min = minBox.value;
+        var max = maxBox.value;
 
         if ((min.length == 0) || (max.length == 0)) {
             initializeText();
@@ -219,12 +255,12 @@
         for (var i = 0; i < maxInputs; i++) {
             convertedKeys[i] = NumpadToStarDirection(keys[i]);
         }
-        if (maxInputs < 4) {
-            convertedKeys[3] = "";
+        for (i = 5; i > (maxInputs - 1); i--) {
+            convertedKeys[i] = ""
         }
 
         //Find RNG numbers based on star values
-        var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], "", "", hexMin, min, max, hexToStarDirection, 2);
+        var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5], hexMin, min, max, hexToStarDirection, 2);
         var currentHexValue = value[0][0]; //second [0] means that this is the "quickest" hex value
 
         if (hits == 0) {
@@ -250,7 +286,7 @@
             //Print all possible values outside of the range the user gave
             var output = "<details><summary>All possible counts:</summary><ul>"
             var countAll = "";
-            var allValue = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], "", "", "7777", 0, 65536, hexToStarDirection, 2);
+            var allValue = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5], "7777", 0, 65536, hexToStarDirection, 2);
             for (i = 0; i < hits; i++) {
                     if (value[1].includes(allValue[1][i]))
                         countAll += "<li style='color:red;'>" + allValue[1][i] + "</li>";
@@ -266,10 +302,14 @@
     function initializeText() {
         directions.innerHTML = "Press on Numpad to start";   
         multipleWarning.innerHTML = "-";
-        enemyOutput1.innerHTML = "-";      
+        enemyOutput1.innerHTML = "-";
+        enemyOutput1Advanced.innerHTML = "";
         enemyOutput2.innerHTML = "-";
+        enemyOutput2Advanced.innerHTML = "";
         enemyOutput3.innerHTML = "-";
+        enemyOutput3Advanced.innerHTML = "";
         enemyOutput4.innerHTML = "-";
+        enemy4Image.src = "images/dragonshield.png";
         allPossibleCounts.innerHTML = "-";
     }
 
@@ -287,6 +327,30 @@
         initializeInputs();
     }
 
+    function advancedInfo(cb) {
+        if (cb.checked) {
+            enemyOutput1Advanced.style.display = "revert";
+            enemyOutput2Advanced.style.display = "revert";
+            enemyOutput3Advanced.style.display = "revert";
+        }
+        else {
+            enemyOutput1Advanced.style.display = "none";
+            enemyOutput2Advanced.style.display = "none";
+            enemyOutput3Advanced.style.display = "none";
+        }
+    }
+
+    function fillMinAndMaxDefaults() {
+        if (subgame == 0) {
+            minBox.value = 750;
+            maxBox.value = 950;
+        }
+        else {
+            minBox.value = 3100;
+            maxBox.value = 3400;
+        }
+    }
+
     
     function subgameToggle(value) {
         switch (value) {
@@ -298,9 +362,7 @@
                 enemy3Image.src = "images/magician.png";
                 enemyLabel3.innerText = "Magician: ";
                 infoContainer4.style.display = 'none';
-                enemyOutput4.innerHTML = "-";
                 subgame = 0;
-                console.log(subgame);
                 initializePage();
                 break;
             case "mww":
@@ -312,7 +374,6 @@
                 enemyLabel3.innerText = "Dragon: ";
                 infoContainer4.style.display = 'revert';
                 subgame = 1;
-                console.log(subgame);
                 initializePage();
                 break;
             default: 
@@ -330,7 +391,8 @@
         else
             var enemyOutput1Text = await slimePredictionRTA(currentHexValue);
 
-        enemyOutput1.innerHTML = (enemyOutput1Text[0] + " - " + enemyOutput1Text[1] + " - " + enemyOutput1Text[2] + " - " + enemyOutput1Text[3] + " - " + advanceRngAndSlice(enemyOutput1Text[4], 0));
+        enemyOutput1.innerHTML = (enemyOutput1Text[0] + " - <img style='transform:scaleX(-1)' src='images/abilities/" + enemyOutput1Text[2].toLowerCase() + ".png'>" + " - " + "<img src='images/abilities/" + enemyOutput1Text[3].toLowerCase() + ".png'>");
+        enemyOutput1Advanced.innerHTML = ("Advances: " + enemyOutput1Text[1] + "&emsp;Ending Value: " + advanceRngAndSlice(enemyOutput1Text[4], 0));
         
 
         var enemyDifficulty2 = stringToBool(difficultySelector2.value);
@@ -338,23 +400,27 @@
         if (enemyDifficulty2) 
             var enemyOutput2Text = await easyPredictionRTA(enemyOutput1Text[4], 1, subgame);
         else
-            var enemyOutput2Text = await hardCavePredictionRTA(enemyOutput1Text[4], 1);
+            var enemyOutput2Text = await hardPredictionRTA(enemyOutput1Text[4], 1, subgame);
 
-        enemyOutput2.innerHTML = (enemyOutput2Text[0] + " - " + enemyOutput2Text[1] + " - " + enemyOutput2Text[2] + " - " + enemyOutput2Text[3] + " - " + advanceRngAndSlice(enemyOutput2Text[4], 0));
-        
+        enemyOutput2.innerHTML = (enemyOutput2Text[0] + " - <img style='transform:scaleX(-1)' src='images/abilities/" + enemyOutput2Text[2].toLowerCase() + ".png'>" + " - " + "<img src='images/abilities/" + enemyOutput2Text[3].toLowerCase() + ".png'>");
+        enemyOutput2Advanced.innerHTML = ("Advances: " + enemyOutput2Text[1] + "&emsp;Ending Value: " + advanceRngAndSlice(enemyOutput2Text[4], 0));
 
         var enemyDifficulty3 = stringToBool(difficultySelector3.value);
 
         if (enemyDifficulty3) 
             var enemyOutput3Text = await easyPredictionRTA(enemyOutput2Text[4], 2, subgame);
         else
-            var enemyOutput3Text = await hardCavePredictionRTA(enemyOutput2Text[4], 2);
+            var enemyOutput3Text = await hardPredictionRTA(enemyOutput2Text[4], 2, subgame);
 
         if (subgame == 1) {
-            enemyOutput3.innerHTML = (enemyOutput3Text[0] + " - " + enemyOutput3Text[1] + " - " + enemyOutput3Text[2] + " - " + enemyOutput3Text[3] + " - " + advanceRngAndSlice(enemyOutput3Text[4], 0));
+            enemyOutput3.innerHTML = (enemyOutput3Text[0] + " - <img style='transform:scaleX(-1)' src='images/abilities/" + enemyOutput3Text[2].toLowerCase() + ".png'>" + " - " + "<img src='images/abilities/" + enemyOutput3Text[3].toLowerCase() + ".png'>");
+            enemyOutput3Advanced.innerHTML = ("Advances: " + enemyOutput3Text[1] + "&emsp;Ending Value: " + advanceRngAndSlice(enemyOutput3Text[4], 0));
 
             var enemyOutput4Text = await dragonSecondTurn(enemyOutput3Text[4]);
-            enemyOutput4.innerHTML = (enemyOutput4Text);
+            enemyOutput4.innerHTML = (enemyOutput4Text[0]);
+            if (enemyOutput4Text[1] > 0) {
+                enemy4Image.src = "images/dragonstars.png";
+            }
         }
         else {
             enemyOutput3.innerHTML = (enemyOutput3Text[0]);

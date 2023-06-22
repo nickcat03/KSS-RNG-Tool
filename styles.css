@@ -2,11 +2,11 @@
 /*Fonts*/
 @font-face {
     font-family: "Ubuntu";
-    src: url("Fonts/Ubuntu/Ubuntu-Regular.ttf") format('truetype');
+    src: url("fonts/Ubuntu/Ubuntu-Regular.ttf") format('truetype');
 }
 @font-face {
     font-family: "Ubuntu";
-    src: url("Fonts/Ubuntu/Ubuntu-Bold.ttf") format('truetype');
+    src: url("fonts/Ubuntu/Ubuntu-Bold.ttf") format('truetype');
     font-weight: bold;
 }
 
@@ -34,7 +34,6 @@ body {
 .links {
     float: right;
     text-align: right;
-    position: fixed;
     right: 30px;
     line-height: 150%;
 }
@@ -80,6 +79,12 @@ input[type='radio'] {
     height: 1.7em;
 }
 
+input[type='checkbox'] { 
+    transform: scale(1.2); 
+    margin-right: 10px;
+    height: 1.4em;
+}
+
 .info-container {
     height: 80px;
 }
@@ -89,8 +94,18 @@ input[type='radio'] {
     margin-left: 100px;
 }
 
-.info-container img {
-    position:absolute;
+.enemy-image {
+    position: absolute;
+}
+
+.enemy-output-text img {
+    display: inline-block;
+    margin: 0 auto;
+    vertical-align: middle;
+}
+
+.enemy-output-text-advanced {
+    display: none;
 }
 
 .loading {
@@ -104,4 +119,8 @@ iframe {
 
 .input-display-div td {
     background-color: white;
+}
+
+.settings-box li {
+    line-height: 50px;
 }
