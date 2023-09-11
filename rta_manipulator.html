@@ -86,6 +86,7 @@
     <div id="directions">Press on Numpad to start</div>
 
     <div id="multiple-warning">-</div>
+    <div id="multiple-warning-details">-</div>
 
     <div id="full-info-container">
         <div class="info-container"><img class="enemy-image" id="enemy1-image" src="images/slime.png"><span class="enemy-output-text" id="enemy-output1">-</span><span class="enemy-output-text-advanced" id="enemy-output1-advanced"></span></div>
@@ -149,6 +150,7 @@
     /*Stuff for RNG display*/
     const directions = document.getElementById("directions");   
     const multipleWarning = document.getElementById("multiple-warning");
+    const multipleWarningDetails = document.getElementById("multiple-warning-details");
     const enemyOutput1 = document.getElementById("enemy-output1");
     const enemyOutput1Advanced = document.getElementById("enemy-output1-advanced");
     const enemyOutput2 = document.getElementById("enemy-output2");
@@ -160,6 +162,8 @@
 
     /*Settings*/
     const noNumpad = document.querySelector("#numpad-toggle");
+
+    var selectedCount = 0;
 
     
 
@@ -177,6 +181,7 @@
                 return;
             }
             let key = `${event.key}`;
+            console.log(key);
             if (noNumpad.checked) {
                 integer = noNumpadConversion(key);
             }
@@ -209,6 +214,16 @@
                     var tableCell =  document.getElementById("box" + (keyCount + 1));
                     tableCell.style.backgroundColor = "white";
                     tableCell.innerHTML = keyCount + 1;
+                }
+            }
+            else if (key === "ArrowLeft" || key === "ArrowRight" && hits > 0) {
+                if (key === "ArrowLeft") {
+                    selectedCount--;
+                    sendKeys = true;
+                }
+                else {
+                    selectedCount++;
+                    sendKeys = true;
                 }
             }
 
@@ -261,7 +276,7 @@
 
         //Find RNG numbers based on star values
         var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5], hexMin, min, max, hexToStarDirection, 2);
-        var currentHexValue = value[0][0]; //second [0] means that this is the "quickest" hex value
+        var currentHexValue = value[0][selectedCount]; //second [0] means that this is the "quickest" hex value
 
         if (hits == 0) {
             initializeText();
@@ -272,6 +287,7 @@
         else if (hits > 1) {
             directions.innerText = "Results:";
             multipleWarning.innerHTML = "<span style='color:red;'>Warning: </span>" + hits + " possible RNG points in this range!";
+            multipleWarningDetails.innerHTML = "Viewing count " + (selectedCount + 1);
             await displayResults(currentHexValue);
         }
         else {
@@ -302,6 +318,7 @@
     function initializeText() {
         directions.innerHTML = "Press on Numpad to start";   
         multipleWarning.innerHTML = "-";
+        multipleWarningDetails.innerHTML = "-";
         enemyOutput1.innerHTML = "-";
         enemyOutput1Advanced.innerHTML = "";
         enemyOutput2.innerHTML = "-";
