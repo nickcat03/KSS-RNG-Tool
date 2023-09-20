@@ -792,8 +792,8 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                                 return ["Slide", 9];
                             }
                             */
-                            for (var i = 0; i < 7; i++) { 
-                                if (minDashes == '2' && i == 0) {
+                            for (var i = 1; i < 7; i++) { 
+                                if (minDashes == '2' && i == 1) {
                                     i++;
                                 }
                                 if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) { //Kirby will dash i number of times
@@ -818,8 +818,8 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                                 console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                                 return ["up+y", 14];
                             }
-                            for (var i = 0; i < 3; i++) { 
-                                if (minDashes == '2' && i == 0) {
+                            for (var i = 1; i < 3; i++) { 
+                                if (minDashes == '2' && i == 1) {
                                     i++;
                                 }
                                 if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) {
@@ -837,9 +837,6 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                                 }
                             }
                             for (var i = 3; i < 7; i++) { 
-                                if (minDashes == '2' && i == 3) {
-                                    i++;
-                                }
                                 if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) {
                                     console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                                     return [(i) + " dash", i];
@@ -858,8 +855,8 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                             For Slime, the only actions we can perform are dashes because there is not enough time to do anything
                             else. In additon, we cannot jump because of Wheelie, so the only thing we can do unfortunately is dash.
                             */
-                            for (var i = 0; i < 10; i++) { 
-                                if (minDashes == '2' && i == 0) {
+                            for (var i = 1; i < 10; i++) { 
+                                if (minDashes == '2' && i == 1) {
                                     i++;
                                 }
                                 if ((battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), enemy) == false)) { //Kirby will dash i number of times
@@ -874,8 +871,8 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                             For Puppet and Magician, we now have the time to perform actions other than dashing.
                             However, Wheelie makes this problematic, so we only include the up+b hammer attack.
                             */
-                            for (var i = 0; i < 3; i++) { 
-                                if (minDashes == '2' && i == 0) {
+                            for (var i = 1; i < 3; i++) { 
+                                if (minDashes == '2' && i == 1) {
                                     i++;
                                 }
                                 if ((battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), enemy) == false)) {
@@ -884,7 +881,7 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                                 }
                             }
                             for (var i = 13; i < 16; i++) {
-                                if (minDashes == '2' && i == 13) {
+                                if (minDashes == '2' && i == 14) {
                                     i++;
                                 }
                                 if ((battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), enemy) == false)) {
@@ -893,9 +890,6 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                                 }
                             }
                             for (var i = 3; i < 10; i++) { 
-                                if (minDashes == '2' && i == 3) {
-                                    i++;
-                                }
                                 if ((battleWindowsAttackFirst(advanceRNG(startHex, i), enemy) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), enemy) == false)) {
                                     console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                                     return [(i) + " dash", i];
@@ -932,8 +926,8 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                             }
                         }
                         console.log("checking dash");
-                        for (var i = 0; i < 2; i++) { 
-                            if (minDashes == '2' && i == 0) {
+                        for (var i = 1; i < 2; i++) { 
+                            if (minDashes == '2' && i == 1) {
                                 i++;
                             }
                             if (battleWindowsAttackFirst(advanceRNG(startHex, i), (enemy + 2 + j)) == false) { //dashes
@@ -959,10 +953,10 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                     for (var j = 0; j < 2; j++) {
                         console.log("checking hammer + dash");
                         if (enemy != 0) {
-                            if (minDashes == '2' && i == 0) {
-                                i++;
-                            }
                             for (var i = 15; i < 17; i++) { 
+                                if (minDashes == '2' && i == 15) {
+                                    i++;
+                                }
                                 if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2 + j) == false) { //up+y + dashes
                                     console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                                     return ["up+y & " + (i - 14) + " dash", i, j];
@@ -971,9 +965,6 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                         }
                         console.log("checking dash");
                         for (var i = 2; i < 10; i++) { 
-                            if (minDashes == '2' && i == 2) {
-                                i++;
-                            }
                             if (battleWindowsAttackFirst(advanceRNG(startHex, i), enemy + 2 + j) == false) { //rest is dashes
                                 console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                                 return [(i) + " dash", i, j];
@@ -1003,8 +994,8 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                             }
                         }
                         console.log("checking dash");
-                        for (var i = 0; i < 2; i++) { 
-                            if (minDashes == '2' && i == 0) {
+                        for (var i = 1; i < 2; i++) { 
+                            if (minDashes == '2' && i == 1) {
                                 i++;
                             }
                             if ((battleWindowsAttackFirst(advanceRNG(startHex, i), (enemy + 2)) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), (enemy + 2)) == false)){ //dashes
@@ -1036,9 +1027,6 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
                         }
                         console.log("checking dash");
                         for (var i = 2; i < 10; i++) { 
-                            if (minDashes == '2' && i == 2) {
-                                i++;
-                            }
                             if ((battleWindowsAttackFirst(advanceRNG(startHex, i), (enemy + 2)) == false) && (battleWindowsAttackFirst(advanceRNG(startHex, i + 2), (enemy + 2)) == false)) { //rest is dashes
                                 console.log("Leaving battle windows function with value: " + advanceRngAndSlice(startHex, i));
                                 return [(i) + " dash", i, j];
@@ -1052,14 +1040,4 @@ function battleWindowsKirbyActions(startHex, enemy, difficulty, subgame, minDash
     }
 }
 
-
-//925
-//953
-//867
-//807
-
-//750 - 1000 is a good range
-//make a checker that sees if you have a good range
-
-
-//7 4 7
+//welcome to spaghetti land
