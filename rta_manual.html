@@ -73,6 +73,7 @@
     </div>
     
     <div class="content">
+        <a href="#日本語">日本語ガイド</a>
         <h2 id="what-is-this">What is this?</h2>
         <p>This is a calculator that can predict the random actions of the entire Battle Windows fight sequence. This is done by first inputting a number of star directions, which gives the program the information required to find the player's specific RNG point. From this information, the program then simulates the entire Battle Windows sequence to predict every single Battle Windows attack, giving the player the actions needed to manipulate "good" RNG.</p>
 
@@ -210,9 +211,51 @@
         <h3>Finding Count Range</h3>
         <p>The best way to calculate our range is by using the "Find RNG Count" tool in <a href="rta_tools.html">Tools</a>.</p>
 
+        <p style="color:red">I still need to finish this guide, sorry!</p>
+
 
         <!--
         <p>While the "Kirby Super Star" logo is displayed, the game will advance RNG once every frame (this is to make the starting point seem random when the game is started). However, there is an oversight in the Japanese version that lets us skip this title screen in one frame, allowing us to only advance one RNG number and making the start more consistent.</p>
         -->
+
+        <h2 id="日本語">日本語ガイド</h2>
+            <p style="font-size:12px">Nippoからのメモ:</p>
+            <p style="font-size:12px">この電卓が英語であることを混乱させて申し訳ない。いつか日本語訳を作ります。</p>
+            <p style="font-size:12px">わみちゃんこのガイドを書いてくれてありがとう。</p>
+
+        <p>バトルウインドウズの乱数調整方法を特定するツールです。</p>
+
+        <h3>事前準備</h3>
+
+        <p>乱数調整をするために、おおよその乱数の範囲を絞る必要があります。</p>
+        <ul>
+            <li>画面右、Toolsを選択。</li>
+            <li>最速乱数でハーフムーンへ入場し、実際の通しのようにバトルウインドウズの部屋まで進める。</li>
+            <li>バトルウインドウズの部屋に入場したら、ジャンプを6回出し、着地した際に発生した星の向きをFind RNG Countへ入力。</li>
+            <li>Results - Predicted RNG Countに数字が表示されるので、数字をメモする。</li>
+            <li>これを複数回繰り返す。</li>
+        </ul>
+
+        <h3>使用方法</h3>
+        <ul>
+            <li>Subgame: 使用したい区間に合わせる。銀河に願いをの場合Milky Way Wishesを選択。</li>
+            <li>Min Max: 事前準備にて計測したおおよその乱数範囲を入力する。</li>
+            <li>Easy Fast: 通常はEasyを選択。Fastについての詳細は割愛。</li>
+            <li>Stars: 着地星を数える個数を選択。Starsが3であれば3回ジャンプをして着地星の向きを入力。入力にはテンキーを用いる。</li>
+            <li>Result: バトルウインドウズ最短行動のための乱数調整法を表示する。敵が行動を行う前に操作を実行する。</li>
+        </ul>
+        <ul>
+            <li>以下操作内容:</li>
+            <ul>
+                <li>Do Nothing - 何もしない</li>
+                <li>1 dash - ダッシュ煙を1回</li>
+                <li>2 dash - ダッシュ煙を2回</li>
+                <li>Slide - スライディング</li>
+                <li>up+y - 鬼殺し火炎ハンマー</li>
+            </ul>
+            <li>操作の隣に表示されるコピーの素で目視乱数サーチ可</li>
+            <li>複数の可能性がある場合はWarningが表示される。キーボードの矢印キーで別の乱数へ切り替える</li>
+            <li>説明が至らないところがあれば随時更新します。</li>
+        </ul>
 
     </div>
