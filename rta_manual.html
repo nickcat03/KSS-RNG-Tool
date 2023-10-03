@@ -42,6 +42,10 @@
             border: 3px solid black;
         }
 
+        .fastmodeimages {
+            width: 500px;
+        }
+
 
     </style>
     <head>
@@ -63,6 +67,11 @@
             <ul>
                 <li><a href="#rng-intro">Introduction</a></li>
             </ul>
+            <li><a href="#fast-mode">Fast Mode</a></li>
+            <ul>
+                <li><a href="#executing-fast-mode">Execution</a></li>
+            </ul>
+            <li><a href="#日本語">日本語ガイド</a></li>
         </ul>
     </div>
 
@@ -211,12 +220,41 @@
         <h3>Finding Count Range</h3>
         <p>The best way to calculate our range is by using the "Find RNG Count" tool in <a href="rta_tools.html">Tools</a>.</p>
 
-        <p style="color:red">I still need to finish this guide, sorry!</p>
+        <p style="color:red">I still need to finish the basics of this guide, sorry!</p>
 
 
         <!--
         <p>While the "Kirby Super Star" logo is displayed, the game will advance RNG once every frame (this is to make the starting point seem random when the game is started). However, there is an oversight in the Japanese version that lets us skip this title screen in one frame, allowing us to only advance one RNG number and making the start more consistent.</p>
         -->
+
+        <h2 id="fast-mode">"Fast" Mode Information</h2>
+        <p>Choosing Fast from the difficulty selector means that you are able to attack right away, but are limited to a 4 frame window, or else the manipulation will fail. This is because the Hammer dust from an up+y attack advances RNG, and using this attack before the enemy lands will create inconsistencies. The timing needs to be precise as to match the calculator's RNG predictions.</p>
+
+        <p>In addition to the strict timing, the calculator will be accounting for two instances of a first turn RNG roll instead of one. This is because accounting for only one would make this a two-frame window, which is very tight and not worth doing 30 minutes into a speedrun. The calculator makes sure that if either are landed on, it will give good RNG regardless of which RNG value the user gets.</p>
+
+        <p>This, consequently, may cause good RNG to appear less, and thus may require more player input in between each turn. It is highly risk-reward.</p>
+
+        <h3 id="executing-fast-mode">Execution</h3>
+        <p>The Hammer attack needs to start on the first four frames the attack will hit the target. This varies across Battle Windows enemies, but ensures that it will be as fast and consistent as possible.</p>
+        
+        <p>4 frames is the highest this threshold will be because going any higher than this will cause inconsistencies with how abilities spawn once the enemy lands, which can advance none or several random numbers. This is due to the Hammer dust that spawns while charging the attack. It would be very complicated to determine this on the fly and is prone to error, so making the trick tight, but consistent, is the best option.</p>
+
+        <p>The best way to determine when it is time to attack is by using the Boss' HP bar in conjunction with other HUD elements as a visual cue. Below are examples of the HP ranges needed for the attack to connect in the first four frames. The left image is the start of the window, and the right image is the end.</p>
+
+        <p>For the sake of completeness, the entire gameplay window will be shown, but it is recommended to zoom in to get a better look.</p>
+
+        <p>(The rest of the enemies still need to be completed.)</p>
+
+        <h4>Dark Knight</h4>
+        <p>Starts at around in between the E and the N, and ends near the middle of the E.</p>
+        <img class="fastmodeimages" src="images/knighttimingstart.png"/>
+        <img class="fastmodeimages" src="images/knighttimingend.png"/>
+
+        <h4>Red Dragon</h4>
+        <p>Starts right after the E, and ends in the middle of the white border and the single green pixel.</p>
+        <p>Dragon is a special exception, as the timing gives 5 frames of leniency instead of 4.</p>
+        <img class="fastmodeimages" src="images/dragontimingstart.png"/>
+        <img class="fastmodeimages" src="images/dragontimingend.png"/>
 
         <h2 id="日本語">日本語ガイド</h2>
             <p style="font-size:12px">Nippoからのメモ:</p>
