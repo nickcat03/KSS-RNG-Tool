@@ -655,6 +655,8 @@ function slimePredictionRTA(startHex, minDashes) {
 
 function hardPredictionRTA(startHex, enemy, subgame, twoDashOnHammerThrow, minDashes) {
 
+    var subgameModifier = subgame * 2;
+
     console.log("Your starting Hex is: " + startHex);
     console.log("Your starting RNG count is: " + hexToCount(startHex));
 
@@ -662,11 +664,16 @@ function hardPredictionRTA(startHex, enemy, subgame, twoDashOnHammerThrow, minDa
     var firstAttackResults = ["Do Nothing", 0]; //initialize first attack results array
     var hitCheckAdvance = 0; //initialize variable for if kirby gets a strong hit
 
-    //first fire clouds from hammer... +10 advances
-    var advances = 10;
+    //first fire clouds from hammer... +8 advances
+    if (enemy == 2) {
+        var advances = 6;
+    }
+    else {
+        var advances = 8;
+    }
 
     //calculate if Puppet goes first
-    if (battleWindowsAttackFirst(advanceRNG(startHex, advances), enemy) || battleWindowsAttackFirst(advanceRNG(startHex, advances + 2), enemy))
+    if (battleWindowsAttackFirst(advanceRNG(startHex, advances), enemy + subgameModifier) || battleWindowsAttackFirst(advanceRNG(startHex, advances + 2), enemy + subgameModifier))
         firstAttack = true; //1 = enemy type
     
     console.log("Set first attack to: " + firstAttack);
@@ -682,7 +689,14 @@ function hardPredictionRTA(startHex, enemy, subgame, twoDashOnHammerThrow, minDa
     console.log("firstAttackResults: " + firstAttackResults[1]);
 
     var message = firstAttackResults[0]; //message that is sent at the end
-    advances += firstAttackResults[1] + 4; //RNG advance for rest of hammer fire clouds +2, +1 for first turn check, +1 for hit check, + manual RNG advancements
+    advances += firstAttackResults[1]; 
+
+    if (enemy == 2) { //+2 or +4 for hammer advance, +1 for first turn check, +1 for hit check, + manual RNG advancements
+        advances += 8;
+    }
+    else {
+        advances += 6;
+    }
 
     console.log("before powerup calculations: " + advanceRngAndSlice(startHex, advances));
     console.log("advances: " + advances)
