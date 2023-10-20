@@ -1,11 +1,5 @@
 //Kirby Super Star RNG Simulator
 
-//these following arrays are for the current bits and next bits, each in integer and boolean form
-const currbitsint = Array(16).fill(0);
-const nextbitsint = Array(16).fill(0);
-const currbitsbin = Array(16).fill(false);
-const nextbitsbin = Array(16).fill(false);
-
 //startRNG is the default RNG value when game starts up
 const startRNG = "7777";
 const minCount = 0;
@@ -123,47 +117,33 @@ function hexToCount(hexTarget) {
 
 
 //RNG-related functions
-function xorCalculate(count, bitnum, negative, a, b, c, d, e) {
-    let result = count === 5 ? a ^ b ^ c ^ d ^ e : a ^ b ^ c;
-    let intresult = negative ? boolToInt(result ^ 1) : boolToInt(result);
-
-    nextbitsint[bitnum] = intresult;
-    nextbitsbin[bitnum] = intresult !== 0;
-}
-  
 function nextHexRNG(initialHex) {
-    const initcurrbin = hexToBin(initialHex).padStart(16, "0");
-    currbitsint.fill(0);
-    currbitsbin.fill(false);
+    initialHex = swapNumberPositions(initialHex);
+    num = Number("0x" + initialHex);
+    num = rng(num);
+    result = num.toString(16).toUpperCase();
+    while (result.length < 4) {
+        result = "0" + result;
+    }
+    result = swapNumberPositions(result);
+    return result;
 
-    for (let i = 0; i < 16; i++) {
-        currbitsint[i] = parseInt(initcurrbin[i]);
-        currbitsbin[i] = currbitsint[i] !== 0;
+    function rng(init) {
+        seed = init;
+        for (let i = 0; i < 11; i++) {
+            const bit = ~(seed ^ (seed >> 1) ^ (seed >> 15)) & 1;
+            seed = (seed << 1) | bit;
+        }
+        trim = seed & 0xffff;
+        return trim;
     }
 
-    xorCalculate(5, 0, true, currbitsbin[6], currbitsbin[7], currbitsbin[8], currbitsbin[10], currbitsbin[11]);
-    xorCalculate(5, 1, false, currbitsbin[6], currbitsbin[8], currbitsbin[9], currbitsbin[11], currbitsbin[12]);
-    xorCalculate(5, 2, false, currbitsbin[7], currbitsbin[9], currbitsbin[10], currbitsbin[12], currbitsbin[13]);
-    xorCalculate(3, 3, false, nextbitsbin[0], currbitsbin[13], currbitsbin[14], true, true);
-    xorCalculate(3, 4, false, nextbitsbin[1], currbitsbin[14], currbitsbin[15], true, true);
-    xorCalculate(3, 5, false, nextbitsbin[2], currbitsbin[15], currbitsbin[0], true, true);
-    xorCalculate(3, 6, false, nextbitsbin[3], currbitsbin[0], currbitsbin[1], true, true);
-    xorCalculate(3, 7, false, nextbitsbin[4], currbitsbin[1], currbitsbin[2], true, true);
-
-    for (let i = 0; i < 5; i++) {
-        nextbitsint[i + 8] = currbitsint[i + 3];
+    function swapNumberPositions(hex) {
+        hex1 = hex.slice(0, 2);
+        hex2 = hex.slice(2);
+        result = hex2 + hex1;
+        return result;
     }
-
-    xorCalculate(3, 13, true, currbitsbin[6], currbitsbin[7], currbitsbin[8], true, true);
-    xorCalculate(3, 14, false, currbitsbin[6], currbitsbin[8], currbitsbin[9], true, true);
-    xorCalculate(3, 15, false, currbitsbin[7], currbitsbin[9], currbitsbin[10], true, true);
-
-    const completeBinary = nextbitsint.join("");
-    const b = parseInt(completeBinary, 2);
-    const inithex = toHexString(b).padStart(4, "0");
-    const hex = inithex.toUpperCase();
-
-    return hex;
 }
 
 function hexToStarDirection(x) {
