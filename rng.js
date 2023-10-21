@@ -170,68 +170,54 @@ function hexToStarDirection(x) {
 }
 
 
-function compareSixNumbers(num1, num2, num3, num4, num5, num6, hex, startCount, endCount, funct, multiplier) {
+function compareSixNumbers(num1, num2, num3, num4, num5, num6, startCount = 0, endCount = 65536, funct = hexToStarDirection, multiplier = 2) {
+    startCount = Math.max(startCount, 0);
+    endCount = Math.min(endCount, 65536);
 
-    if (startCount < 0)
-        startCount = 0;
-    
-    if (endCount > 65536)
-        endCount = 65536;
+    let num = [num6, num5, num4, num3, num2, num1].filter(n => n.length !== 0);
+    const amount = num.length;
 
-    let num = [num6, num5, num4, num3, num2, num1];
-    let countList = [];
-    let hexList = [];
-    let amount = 6;
-    var count = startCount;
-    hits = 0;
-    let rngWindow = Array(12).fill(0);
-    let checkNum = Array(6).fill(false);
-    let tempHexList = Array(12).fill(0);
-    let hasValues = false;
-
-    for (var i = 0; i < 6; i++) {
-        if (num[i].length != 0) {
-            checkNum[i] = true;
-        }
-    }
-
-    for (var i = 0; i < 6; i++) {
-        if (checkNum[i] == true){
-            hasValues = true;
-            break;
-        } else {
-            amount = (6 - (i + 1));
-        }
-    }
-
-    if (!hasValues)
+    if (amount === 0) {
         return;
-    
+    }
+
+    const arraySize = ((amount * multiplier) - (multiplier - 1));
+
+    const rngWindow = Array(arraySize).fill(0);
+    const tempHexList = Array(arraySize).fill(0);
+    const countList = [];
+    const hexList = [];
+
+    let count = startCount;
+    hits = 0;
+    let hex = advanceRNG("7777", startCount);
+
     while (count < endCount) {
         count++;
-        let doMatch = Array(6).fill(false);
-        
         hex = nextHexRNG(hex);
         tempHexList.unshift(hex);
         tempHexList.pop();
 
-        var num1 = hex.slice(0, 2);
+        const num1 = hex.slice(0, 2);
 
         rngWindow.unshift(funct(num1));
         rngWindow.pop();
 
-        for (var i = 0; i < 6; i++) {
-            if ((checkNum[i] == false) || (rngWindow[i * multiplier] == num[i])) {
+        const doMatch = new Array(amount).fill(false);
+
+        for (let i = 0; i < amount; i++) {
+            if (!num[i] || rngWindow[i * multiplier] === num[i]) {
                 doMatch[i] = true;
             }
         }
 
-        if (allAreTrue(doMatch) && (count > (6 - amount))) {
-            countList.push(count - ((6 - amount) * multiplier));
-            hexList.push(tempHexList[((6 - amount) * multiplier)]);
+        if (doMatch.every(match => match) && count > 6 - amount) {
+            countList.push(count);
+            hexList.push(tempHexList[0]);
             hits++;
         }
     }
+
     return [hexList, countList, amount];
 }
 
