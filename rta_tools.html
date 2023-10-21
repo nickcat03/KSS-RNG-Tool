@@ -137,7 +137,7 @@
                     convertedKeys[i] = NumpadToStarDirection(keys[i]);
                 }
 
-                var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5], "7777", 0, 65536, hexToStarDirection, 2);
+                var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5]);
 
                 if (typeof value[1][0] === "undefined") {
                     countResults1.innerText = "Not a valid star combination.";
@@ -195,8 +195,6 @@
         if (max > 65536)
             max = 65536;
 
-        var minHex = advanceRNG("7777", min);
-
         var table = "<table style='margin: 30px 0px 30px 0px;'><tr><th>Amount</th><th>Directions</th><th style='width:40%'>Hexes</th><th style='width:40%'>Decimals</th><th style='width:20%'>Counts</th></tr>";
         var totalOutcomes = 0;
         var totalOutcomeChance = 0;
@@ -204,14 +202,14 @@
 
         if (findBoxInputs == 1) {
             for (var i = 1; i < 9; i++) {
-                var value = compareSixNumbers(i, "", "", "", "", "", minHex, min, max, hexToStarDirection, 2);
+                var value = compareSixNumbers(i, "", "", "", "", "", min, max);
                 applyTable(hits);
             }
         }
         else if (findBoxInputs == 2) {
             for (var i = 1; i < 9; i++) {
                 for (var j = 1; j < 9; j++) {
-                    var value = compareSixNumbers(i, j, "", "", "", "", minHex, min, max, hexToStarDirection, 2);
+                    var value = compareSixNumbers(i, j, "", "", "", "", min, max);
                     applyTable(hits);
                 }
             }
@@ -220,7 +218,7 @@
             for (var i = 1; i < 9; i++) {
                 for (var j = 1; j < 9; j++) {
                     for (var k = 1; k < 9; k++) {
-                        var value = compareSixNumbers(i, j, k, "", "", "", minHex, min, max, hexToStarDirection, 2);
+                        var value = compareSixNumbers(i, j, k, "", "", "", min, max);
                         applyTable(hits);
                     }
                 }
@@ -231,7 +229,7 @@
                 for (var j = 1; j < 9; j++) {
                     for (var k = 1; k < 9; k++) {
                         for (var m = 1; m < 9; m++) {
-                            var value = compareSixNumbers(i, j, k, m, "", "", minHex, min, max, hexToStarDirection, 2);
+                            var value = compareSixNumbers(i, j, k, m, "", "", min, max);
                             applyTable(hits);
                         }
                     }
@@ -244,7 +242,7 @@
                     for (var k = 1; k < 9; k++) {
                         for (var m = 1; m < 9; m++) {
                             for (var n = 1; n < 9; n++) {
-                                var value = compareSixNumbers(i, j, k, m, n, "", minHex, min, max, hexToStarDirection, 2);
+                                var value = compareSixNumbers(i, j, k, m, n, "", min, max);
                                 applyTable(hits);
                             }
                         }
@@ -259,7 +257,7 @@
                         for (var m = 1; m < 9; m++) {
                             for (var n = 1; n < 9; n++) {
                                 for (var o = 1; o < 9; o++) {
-                                    var value = compareSixNumbers(i, j, k, m, n, o, minHex, min, max, hexToStarDirection, 2);
+                                    var value = compareSixNumbers(i, j, k, m, n, o, min, max);
                                     applyTable(hits);
                                 }
                             }
