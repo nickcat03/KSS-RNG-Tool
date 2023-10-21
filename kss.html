@@ -428,7 +428,7 @@
             }
         }
     
-        var value = compareSixNumbers(star[0], star[1], star[2], star[3], star[4], star[5], "7777", 0, 65536, hexToStarDirection, 2);
+        var value = compareSixNumbers(star[0], star[1], star[2], star[3], star[4], star[5]);
 
         var table = "<table><tr><th>Hex</th><th>Decimal</th><th>Count</th></tr>";
         for (var i = 0; i < hits; i++) {
@@ -450,7 +450,7 @@
             num[i] = document.getElementById("findFirstNumber" + (i + 1)).value;
         }
 
-        var value = compareSixNumbers(num[0], num[1], num[2], num[3], num[4], num[5], "7777", 0, 65536, hexToDecimal, 1);
+        var value = compareSixNumbers(num[0], num[1], num[2], num[3], num[4], num[5], 0, 65536, hexToDecimal, 1);
 
         var table = "<table><tr><th>First Decimal</th><th>Last Decimal</th><th>First Count</th></tr>";
         for (var i = 0; i < hits; i++) {
