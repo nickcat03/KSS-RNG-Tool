@@ -271,8 +271,6 @@
         if (max > 65536)
             max = 65536;
         
-        var hexMin = advanceRNG("7777", min);
-        
         for (var i = 0; i < maxInputs; i++) {
             convertedKeys[i] = NumpadToStarDirection(keys[i]);
         }
@@ -281,7 +279,7 @@
         }
 
         //Find RNG numbers based on star values
-        var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5], hexMin, min, max, hexToStarDirection, 2);
+        var value = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5], min, max, hexToStarDirection, 2);
         var currentHexValue = value[0][selectedCount]; //second [0] means that this is the "quickest" hex value
 
         if (hits == 0) {
@@ -308,7 +306,7 @@
             //Print all possible values outside of the range the user gave
             var output = "<details><summary>All possible counts:</summary><ul>"
             var countAll = "";
-            var allValue = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5], "7777", 0, 65536, hexToStarDirection, 2);
+            var allValue = compareSixNumbers(convertedKeys[0], convertedKeys[1], convertedKeys[2], convertedKeys[3], convertedKeys[4], convertedKeys[5], 0, 65536, hexToStarDirection, 2);
             for (i = 0; i < hits; i++) {
                     if (value[1].includes(allValue[1][i]))
                         countAll += "<li style='color:red;'>" + allValue[1][i] + "</li>";
