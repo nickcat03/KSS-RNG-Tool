@@ -406,56 +406,24 @@ function determinePowerType (startHex, modifier) {
 }
 
 function battleWindowsPowerSelect(determinePowerPool, powerNumber) {
-    if (isBetween(determinePowerPool, 0, 63) || isBetween(determinePowerPool, 128, 191)) {   //pool 1
-        if (isBetween(powerNumber, 0, 21))
-            return "Fighter";
-        else if (isBetween(powerNumber, 22, 42))
-            return "Plasma";
-        else if (isBetween(powerNumber, 43, 63))
-            return "Hammer";
-        else if (isBetween(powerNumber, 64, 85))
-            return "Beam";
-        else if (isBetween(powerNumber, 86, 106))
-            return "Bomb";
-        else if (isBetween(powerNumber, 107, 127))
-            return "Sword";
-        else if (isBetween(powerNumber, 128, 148))
-            return "Hammer";
-        else if (isBetween(powerNumber, 149, 170))
-            return "Bomb";
-        else if (isBetween(powerNumber, 171, 191))
-            return "Plasma";
-        else if (isBetween(powerNumber, 192, 213))
-            return "Sword";
-        else if (isBetween(powerNumber, 214, 233))
-            return "Beam";
-        else if (isBetween(powerNumber, 234, 255))
-            return "Fighter";
-    } else {    //pool 2
-        if (isBetween(powerNumber, 0, 21))
-            return "Stone";
-        else if (isBetween(powerNumber, 22, 42))
-            return "Cutter";
-        else if (isBetween(powerNumber, 43, 63))
-            return "Wheel";
-        else if (isBetween(powerNumber, 64, 85))
-            return "Jet";
-        else if (isBetween(powerNumber, 86, 106))
-            return "Ice";
-        else if (isBetween(powerNumber, 107, 127))
-            return "Parasol";
-        else if (isBetween(powerNumber, 128, 148))
-            return "Fire";
-        else if (isBetween(powerNumber, 149, 170))
-            return "Suplex";
-        else if (isBetween(powerNumber, 171, 191))
-            return "Ninja";
-        else if (isBetween(powerNumber, 192, 213))
-            return "Yo-yo";
-        else if (isBetween(powerNumber, 214, 233))
-            return "Mirror";
-        else if (isBetween(powerNumber, 234, 255))
-            return "Wing";
+    const pools = [
+        ["Fighter", "Plasma", "Hammer", "Beam", "Bomb", "Sword", "Hammer", "Bomb", "Plasma", "Sword", "Beam", "Fighter"],
+        ["Stone", "Cutter", "Wheel", "Jet", "Ice", "Parasol", "Fire", "Suplex", "Ninja", "Yo-yo", "Mirror", "Wing"]
+    ];
+    let poolIndex = 1;
+    if ((isBetween(determinePowerPool, 0, 63) || isBetween(determinePowerPool, 128, 191))) {
+        poolIndex = 0;
+    }
+    return pools[poolIndex][mapPowerNumber(powerNumber)];
+
+    function mapPowerNumber(powerNumber) {
+        const ranges = [0, 22, 43, 64, 86, 107, 128, 149, 171, 192, 214, 234];
+        for (let i = 0; i < ranges.length - 1; i++) {
+            if (isBetween(powerNumber, ranges[i], ranges[i + 1] - 1)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
 
