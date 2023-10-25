@@ -417,7 +417,7 @@ function battleWindowsPowerSelect(determinePowerPool, powerNumber) {
     return pools[poolIndex][mapPowerNumber(powerNumber)];
 
     function mapPowerNumber(powerNumber) {
-        const ranges = [0, 22, 43, 64, 86, 107, 128, 149, 171, 192, 214, 234];
+        const ranges = [0, 22, 43, 64, 86, 107, 128, 149, 171, 192, 214, 234, 255];
         for (let i = 0; i < ranges.length - 1; i++) {
             if (isBetween(powerNumber, ranges[i], ranges[i + 1] - 1)) {
                 return i;
