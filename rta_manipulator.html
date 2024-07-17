@@ -104,7 +104,7 @@
             <li>Lowest dash number for:</li>
             <ul>
                 <li><label for="fast-dash-toggle">General manipulation:</label> <input onclick="initializePage()" type="radio" name="fast-dash-toggle" value="1" /><label>1</label> <input checked="checked" onchange="initializePage()" type="radio" name="fast-dash-toggle" value="2" /><label>2</label></li>
-                <li><label for="two-dash-on-hammer-throw">Knight hammer throw:</label> <input onchange="initializePage()" type="radio" name="two-dash-on-hammer-throw" value="1" /><label>1</label> <input checked="checked" onchange="initializePage()" type="radio" name="two-dash-on-hammer-throw" value="2" /><label>2</label></li>
+                <li><label for="two-dash-on-hammer-throw">Knight hammer throw:</label> <input checked="checked" onchange="initializePage()" type="radio" name="two-dash-on-hammer-throw" value=0 /><label>0</label> <input onchange="initializePage()" type="radio" name="two-dash-on-hammer-throw" value=1 /><label>1</label> <input checked="checked" onchange="initializePage()" type="radio" name="two-dash-on-hammer-throw" value=2 /><label>2</label></li>
             </ul>
             <li><label>No Numpad:</label><input type="checkbox" id="numpad-toggle" onChange="initializePage()"></li>
             <li><label>Technical Information:</label><input type="checkbox" id="advanced-toggle" onChange="advancedInfo(this)"></li>
@@ -407,7 +407,7 @@
     async function displayResults(currentHexValue) {
 
         var enemyDifficulty1 = stringToBool(difficultySelector1.value);
-        var twoDashOnHammerThrow = document.querySelector('input[name="two-dash-on-hammer-throw"]:checked').value;
+        var twoDashOnHammerThrow = parseInt(document.querySelector('input[name="two-dash-on-hammer-throw"]:checked').value, 10);
         var minDashes = document.querySelector("input[name='fast-dash-toggle']:checked").value;
 
         if (enemyDifficulty1) 

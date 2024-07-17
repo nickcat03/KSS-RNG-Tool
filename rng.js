@@ -475,12 +475,8 @@ function easyPredictionRTA (startHex, enemy, subgame, twoDashOnHammerThrow, minD
     }
     else {
         if (enemy == 1) { //Knight 
-            if (twoDashOnHammerThrow == "2") {
-                advances += 2; //dash
-            }
-            else {
-                advances += 1;
-            }
+            advances += twoDashOnHammerThrow;
+
             console.log("twodashonhammer: " + twoDashOnHammerThrow);
 
             if (advanceRngAndSlice(startHex, advances + 1) < 64)
@@ -659,13 +655,7 @@ function hardPredictionRTA(startHex, enemy, subgame, twoDashOnHammerThrow, minDa
     }
     else {
         if (enemy == 1) {
-            if (twoDashOnHammerThrow) {
-                advances += 2 //dash
-            }
-            else {
-                advances += 1
-            }
-            
+            advances += twoDashOnHammerThrow
 
             if (advanceRngAndSlice(startHex, advances + 1) < 64)
                 advances += 10; //Hard hit
